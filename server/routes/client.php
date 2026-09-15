@@ -7,6 +7,9 @@ use App\Http\Controllers\Api\V1\Common\ConfigController;
 use App\Http\Controllers\Api\V1\Exam\ExamController;
 use App\Http\Controllers\Api\V1\File\FileController;
 use App\Http\Controllers\Api\V1\Import\ImportController;
+use App\Http\Controllers\Api\V1\Member\MemberController;
+use App\Http\Controllers\Api\V1\Order\OrderController;
+use App\Http\Controllers\Api\V1\Search\SearchController;
 use App\Http\Controllers\Api\V1\User\AuthController;
 use App\Http\Controllers\Api\V1\User\ProfileController;
 use App\Http\Controllers\Api\V1\Wrong\WrongQuestionController;
@@ -199,4 +202,31 @@ Route::middleware(['auth:client', 'user.active'])->name('exam.')->group(function
 
     // API-EXM-005 考试记录列表
     Route::get('exam-records', [ExamController::class, 'records'])->name('records.index');
+});
+
+// =============================================================================
+// 会员模块 · API-MBR-*（需登录）
+// =============================================================================
+Route::middleware(['auth:client', 'user.active'])->prefix('member')->name('member.')->group(function () {
+    // API-MBR-001 会员权益与套餐列表
+    Route::get('plans', [MemberController::class, 'plans'])->name('plans');
+
+    // API-MBR-002 开通会员下单（返回待支付订单，支付留待 API-PAY-001/002）
+    Route::post('orders', [MemberController::class, 'storeOrder'])->name('orders.store');
+});
+
+// =============================================================================
+// 订单模块 · API-ORD-*（需登录，仅本人订单）
+// =============================================================================
+Route::middleware(['auth:client', 'user.active'])->group(function () {
+    // API-ORD-001 我的订单列表
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+});
+
+// =============================================================================
+// 搜索模块 · API-SRC-*（需登录，不依赖 AI）
+// =============================================================================
+Route::middleware(['auth:client', 'user.active'])->prefix('search')->name('search.')->group(function () {
+    // API-SRC-001 题库内搜索试题
+    Route::get('questions', [SearchController::class, 'questions'])->name('questions');
 });

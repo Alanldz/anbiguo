@@ -242,7 +242,71 @@ MemberLevel：0 普通 / 1 月卡 / 2 季卡 / 3 年卡 / 4 永久
 
 ---
 
-## 七、实现落地文件
-- Service：`server/app/Services/Api/{UserProfileService,ImportService,QuestionPracticeService,WrongQuestionService,ExamService}.php`
-- Controller：`server/app/Http/Controllers/Api/V1/{User/ProfileController,Import/ImportController,Bank/QuestionPracticeController,Wrong/WrongQuestionController,Exam/ExamController}.php`
-- 路由：`server/routes/client.php`（替换「待开发」区块）
+## 七、会员 · API-MBR（本期仅下单，支付待微信支付接入）
+
+### API-MBR-001 `GET /member/plans`（需登录）
+- resp：`{ list: MemberPlan[] }`
+- 读 `order_member_plans`（status=1 上架、未软删），按 `sort_order` 升序。
+- 注：前端 `client/src/types/index.ts` 暂无 `MemberPlan` 类型，本契约先行定义，待前端补类型。
+
+```jsonc
+// MemberPlan —— 会员套餐（无对应前端类型，本次定义，待补）
+{
+  "id": 1, "name": "连续包月",
+  "level": 1,                  // MemberLevel：0 普通 1 月卡 2 季卡 3 年卡 4 永久
+  "level_text": "月卡",
+  "duration_days": 30,         // 有效天数，永久为 0
+  "price_amount": 30.00,       // 现价（元）
+  "origin_amount": 39.00,      // 原价（划线价）
+  "description": "",
+  "benefits": ["每日 AI 导题 10 次", "全题库免费刷"],  // 由 benefits_json 解析为数组
+  "ai_import_quota": 10,       // 赠送 AI 导题配额
+  "is_recommend": true
+}
+```
+
+### API-MBR-002 `POST /member/orders`（需登录）
+- req：`{ plan_id* }`
+- resp：`{ order_no, order_type, biz_id, biz_title, origin_amount, discount_amount, pay_amount, status, status_text, expired_at }`
+- 校验套餐存在且 status=1 上架；否则抛 `DATA_NOT_FOUND`（不存在）/ `PLAN_OFF_SHELF`（已下架）。
+- 创建 `order_orders`：`order_type=1 会员`、`status=0 待支付`、`expired_at=now+30min`。
+- **支付方式待微信支付接入，本期仅返回待支付订单**，支付状态流转留待 API-PAY-001/002。
+- `order_type`/`status` 取值见 `OrderType`/`OrderStatus` 枚举（`status_text` 由枚举 label 给出）。
+
+---
+
+## 八、订单 · API-ORD（需登录，仅本人订单）
+
+### API-ORD-001 `GET /orders`（需登录）
+- query：`page, page_size, status?`（status 可选：0 待支付 1 已支付 2 已取消 3 已退款 4 已关闭）
+- resp：分页 `OrderItem[]`
+
+```jsonc
+// OrderItem —— 我的订单（无对应前端类型，本次定义，待补）
+{
+  "id": 1, "order_no": "OD20260915110000abcdef",
+  "order_type": 1, "order_type_text": "会员",
+  "biz_id": 2, "biz_title": "年卡会员",
+  "origin_amount": 399.00, "discount_amount": 0.00, "pay_amount": 399.00,
+  "status": 0, "status_text": "待支付",
+  "created_at": "2026-09-15 11:00:00", "paid_at": null
+}
+```
+
+---
+
+## 九、搜索 · API-SRC
+
+### API-SRC-001 `GET /search/questions`（需登录）
+- query：`keyword*（题干模糊匹配，必填）`、`bank_id?（校验归属或可见性）`、`type?（题型筛选）`、`page, page_size`
+- resp：分页 `Question[]`（复用 §三 API-QUE-001 的 Question 形状，含 `answer`/`analysis`；以契约为准）
+- 校验：`keyword` 缺失抛 `PARAM_MISSING`；`bank_id` 非本人且非官方/非正常的不可见题库抛 `BANK_NO_PERMISSION`。
+- 匹配：`question_items.stem LIKE %keyword%`（`%`/`_` 已转义），仅 `status=1` 且未软删；`bank_id`/`type` 可选过滤。
+- 注：SRC-002（拍照/文字搜题，依赖 AI）不在本期；本契约不加 SRC-002。
+
+---
+
+## 十、实现落地文件
+- Service：`server/app/Services/Api/{UserProfileService,ImportService,QuestionPracticeService,WrongQuestionService,ExamService,MemberService,OrderService,QuestionSearchService}.php`
+- Controller：`server/app/Http/Controllers/Api/V1/{User/ProfileController,Import/ImportController,Bank/QuestionPracticeController,Wrong/WrongQuestionController,Exam/ExamController,Member/MemberController,Order/OrderController,Search/SearchController}.php`
+- 路由：`server/routes/client.php`（追加 member/orders/ search 区块）

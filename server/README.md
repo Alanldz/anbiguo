@@ -144,6 +144,12 @@ php artisan queue:work redis --queue=default,import,notify,export
 | API-QUE-001~005 | GET/POST/PUT | `/api/v1/question-banks/{id}/questions` `questions/{id}/*` | 练习取题 / 作答 / 收藏 / 笔记 / 报错 |
 | API-WRG-001~002 | GET/DELETE | `/api/v1/wrong-questions*` | 错题列表 / 移除 |
 | API-EXM-001~005 | GET/POST | `/api/v1/exam-papers*` `exam-records*` | 组卷 / 交卷（幂等）/ 成绩 / 记录 |
+| API-MBR-001~002 | GET/POST | `/api/v1/member/*` | 套餐列表 / 开通下单（待支付，支付待接入） |
+| API-ORD-001 | GET | `/api/v1/orders` | 我的订单列表 |
+| API-SRC-001 | GET | `/api/v1/search/questions` | 题库内关键词搜索 |
+
+> 定时任务命令 5 个已实现（`app/Console/Commands/`）：member:expire-scan / order:close-expired /
+> file:clean-temp / file:clean-deleted / data:recount，签名与 `routes/console.php` 调度注册一致。
 
 > 用户后台共 50 个接口已实现，字段级契约见 `../console/API-CONTRACT.md`，前端工程见 `../console/web/`。
 > 客户端 P0 接口 27 个已实现（USER/IMP/QUE/WRG/EXM），字段级契约见 `../client/API-CONTRACT.md`。

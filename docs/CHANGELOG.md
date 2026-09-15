@@ -3,6 +3,23 @@
 > 记录粒度：文档规范层面的变更。代码变更走 Git 提交记录。
 > 格式：`日期 · 变更人 · 变更内容 · 影响范围`
 
+## 2026-09-15 · 第九次变更
+
+**变更人**：WorkBuddy（待补充实际负责人）
+
+**变更内容**
+
+1. **客户端 P1 接口（无第三方依赖部分）4 个落地**：
+   - API-MBR-001 会员套餐列表、API-MBR-002 开通会员下单（本期仅创建待支付订单，支付待微信支付接入）、
+     API-ORD-001 我的订单列表、API-SRC-001 题库内关键词搜索（%/_ 转义 + 题库可见性校验）
+   - 契约 `client/API-CONTRACT.md` 新增 §七~§九；新增 Member/Order/Search 控制器与服务
+2. **5 个定时任务 Artisan 命令实现**（`app/Console/Commands/`，签名与 `routes/console.php` 调度注册逐一核对一致）：
+   member:expire-scan / order:close-expired / file:clean-temp / file:clean-deleted / data:recount，
+   全部 chunkById 分块 + Log 记录 + handle 返回码
+3. **`docs/04` 进度更新**：121 个接口已开发 112 个（剩余：API-SRC-002 依赖 AI、API-PAY-001~002 依赖微信支付商户号、API-ADM-100~105 总后台 P2）
+
+**影响范围**：客户端商业化查询链路、搜索、定时任务（`schedule:run` 不再报命令不存在）。
+
 ## 2026-09-15 · 第八次变更
 
 **变更人**：WorkBuddy（待补充实际负责人）

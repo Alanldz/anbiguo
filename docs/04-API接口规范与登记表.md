@@ -113,14 +113,14 @@
 | API-EXM-003 | 考试 | 交卷 | POST | `/api/v1/exam-records` | 是 | 幂等 | 已开发 | 2026-09-15 建立 |
 | API-EXM-004 | 考试 | 成绩与试卷回顾 | GET | `/api/v1/exam-records/{id}` | 是 | — | 已开发 | 2026-09-15 建立 |
 | API-EXM-005 | 考试 | 考试记录列表 | GET | `/api/v1/exam-records` | 是 | — | 已开发 | 2026-09-15 建立 |
-| API-SRC-001 | 搜索 | 题库内搜索试题 | GET | `/api/v1/search/questions` | 是 | — | 待开发 | 2026-09-15 建立 |
+| API-SRC-001 | 搜索 | 题库内搜索试题 | GET | `/api/v1/search/questions` | 是 | — | 已开发（不依赖 AI） | 2026-09-15 建立 |
 | API-SRC-002 | 搜索 | 拍照/文字搜题 | POST | `/api/v1/search/solve` | 是 | 配额 | 待开发 | 2026-09-15 建立 |
 | API-FIL-001 | 文件 | 获取 OSS 直传凭证 | POST | `/api/v1/files/upload-token` | 是 | — | 已开发 | 2026-09-15 建立 |
 | API-FIL-002 | 文件 | 上传完成回调登记 | POST | `/api/v1/files/complete` | 是 | — | 已开发 | 2026-09-15 建立 |
 | API-FIL-003 | 文件 | 学习资料列表 | GET | `/api/v1/file-assets` | 是 | — | 已开发 | 2026-09-15 建立 |
-| API-MBR-001 | 会员 | 会员权益与套餐 | GET | `/api/v1/member/plans` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-MBR-002 | 会员 | 开通会员下单 | POST | `/api/v1/member/orders` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-ORD-001 | 订单 | 我的订单列表 | GET | `/api/v1/orders` | 是 | — | 待开发 | 2026-09-15 建立 |
+| API-MBR-001 | 会员 | 会员权益与套餐 | GET | `/api/v1/member/plans` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-MBR-002 | 会员 | 开通会员下单 | POST | `/api/v1/member/orders` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-ORD-001 | 订单 | 我的订单列表 | GET | `/api/v1/orders` | 是 | — | 已开发 | 2026-09-15 建立 |
 | API-PAY-001 | 支付 | 微信支付统一下单 | POST | `/api/v1/pay/wechat/prepay` | 是 | — | 待开发 | 2026-09-15 建立 |
 | API-PAY-002 | 支付 | 微信支付回调 | POST | `/api/v1/pay/wechat/notify` | 否（验签） | — | 待开发 | 2026-09-15 建立 |
 | API-CFG-001 | 配置 | 客户端启动配置 | GET | `/api/v1/config/boot` | 否 | — | 已开发 | 2026-09-15 建立 |
@@ -304,15 +304,15 @@
 | API-EXM-004 | GET `/api/v1/exam-records/{id}` | 已开发 | `Api/V1/Exam/ExamController::showRecord` |
 | API-EXM-005 | GET `/api/v1/exam-records` | 已开发 | `Api/V1/Exam/ExamController::records` |
 
-> 客户端 44 + 用户后台 50（§四，含认证 3）+ 总后台 27（§五）= **121 个接口中已开发 113 个**。剩余待开发：客户端搜索 2 个（API-SRC-001~002，依赖 AI）+ 会员/订单/支付 5 个（API-MBR/ORD/PAY，依赖微信支付）+ 总后台 6 个（API-ADM-100~105）。全部状态为「已开发」，均待联调。
+> 客户端 44 + 用户后台 50（§四，含认证 3）+ 总后台 27（§五）= **121 个接口中已开发 112 个**。剩余待开发：客户端搜索 1 个（API-SRC-002，依赖 AI）+ 支付 2 个（API-PAY-001~002，依赖微信支付）+ 总后台 6 个（API-ADM-100~105）。全部状态为「已开发」，均待联调。
 
 ### 8.1 待补齐清单（按优先级）
 
 | 优先级 | 模块 | 接口 |
 | --- | --- | --- |
 | ~~P0~~ | ~~导入 / 练习 / 考试 / 错题 / 用户~~ | ~~API-IMP/QUE/WRG/EXM/USER~~ 已于 2026-09-15 全部落地（导入与 OCR 为占位，待 AI 接入后升级） |
-| P1 | 搜索 | API-SRC-001~002（依赖 AI 大模型） |
-| P1 | 会员 / 订单 / 支付 | API-MBR-001~002、API-ORD-001、API-PAY-001~002（依赖微信支付商户号） |
+| P1 | 搜索 | API-SRC-001（已开发，不依赖 AI）、API-SRC-002（待开发，依赖 AI 大模型） |
+| P1 | 支付 | API-PAY-001~002（待开发，依赖微信支付商户号） |
 | P2 | 总后台其余 | API-ADM-100~105（独立应用 `admin/api/`） |
 
 ### 8.2 尚未实现的服务端能力
@@ -323,5 +323,5 @@
 | 微信支付 | 未实现 | `order_payments` 表结构已就绪，接口未开发 |
 | AI 导题解析 | 未实现 | `question_import_tasks` 表结构已就绪，Job 未开发 |
 | OCR 拍照录题 | 未实现 | 配置项已就绪 |
-| 定时任务命令 | 调度已注册，命令未实现 | 需补 `member:expire-scan` 等 5 个命令，否则 `schedule:run` 会报「命令不存在」 |
+| 定时任务命令 | 调度已注册，命令已实现 | `member:expire-scan`/`order:close-expired`/`file:clean-temp`/`file:clean-deleted`/`data:recount` 5 个命令已落 `app/Console/Commands`，与 `routes/console.php` 签名一致 |
 | 出口 IP 白名单 / TOTP 二次验证 | 未实现 | 总后台安全加固项，见 `docs/06` §八 |
