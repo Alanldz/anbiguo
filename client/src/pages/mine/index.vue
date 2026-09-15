@@ -103,7 +103,7 @@ const moreEntries: GridMenuItem[] = [
   { key: 'help', label: '帮助中心', iconText: '助', path: '' },
   { key: 'web', label: '电脑网页版', iconText: '网', path: '' },
   { key: 'redeem', label: '兑换码', iconText: '兑', path: '' },
-  { key: 'trash', label: '回收站', iconText: '收', path: '' }
+  { key: 'trash', label: '回收站', iconText: '收', path: '/pages-sub/bank/recycle' }
 ]
 
 onShow(() => {

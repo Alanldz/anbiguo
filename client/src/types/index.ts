@@ -146,3 +146,69 @@ export interface ImportTask {
   status: 'pending' | 'parsing' | 'success' | 'failed'
   fail_reason?: string
 }
+
+/** 练习模式，对应后端 PracticeMode 枚举（API-REC-001） */
+export enum PracticeMode {
+  Sequence = 1, // 顺序练习
+  Random = 2, // 随机练习
+  Special = 3, // 专项练习
+  Wrong = 4, // 错题重做
+  Flashcard = 5, // 闪卡
+  Behead = 6 // 斩题
+}
+
+/** 练习记录状态，对应后端 PracticeStatus 枚举（API-REC-001） */
+export enum PracticeStatus {
+  Ongoing = 1, // 进行中
+  Finished = 2, // 已完成
+  Abandoned = 3 // 已放弃
+}
+
+/** 我的收藏项（API-FAV-001 /api/v1/favorites） */
+export interface FavoriteItem {
+  id: number // 收藏记录 id
+  question_id: number // 题目 id
+  bank_id: number // 所属题库 id
+  bank_name: string // 所属题库名称
+  question_type: QuestionType // 题型
+  question_title: string // 题干
+  question_options: QuestionOption[] // 选项
+  question_difficulty: number // 难度（1~5）
+  folder_name: string // 收藏夹名称
+  created_at: string // 收藏时间
+}
+
+/** 我的笔记项（API-NOTE-001 /api/v1/notes） */
+export interface NoteItem {
+  id: number // 笔记记录 id
+  question_id: number // 题目 id
+  bank_id: number // 所属题库 id
+  bank_name: string // 所属题库名称
+  question_title: string // 关联题干摘要
+  content: string // 笔记内容
+  like_count: number // 点赞数
+  created_at: string // 创建时间
+  updated_at: string // 更新时间
+}
+
+/** 练习记录项（API-REC-001 /api/v1/practice-records） */
+export interface PracticeRecordItem {
+  id: number // 记录 id
+  bank_id: number // 题库 id
+  bank_name: string // 题库名称
+  practice_mode: PracticeMode // 练习模式
+  total_count: number // 题目总数
+  answered_count: number // 已答题数
+  right_count: number // 答对题数
+  wrong_count: number // 答错题数
+  correct_rate: number // 正确率（0~100）
+  duration_seconds: number // 时长（秒）
+  status: PracticeStatus // 状态
+  started_at: string | null // 开始时间
+  finished_at: string | null // 结束时间
+}
+
+/** 回收站题库项（API-BANK-008 /api/v1/question-banks/recycle），结构同 QuestionBank 并附加 deleted_at */
+export interface RecycleBankItem extends QuestionBank {
+  deleted_at: string // 删除时间
+}

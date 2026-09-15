@@ -230,6 +230,53 @@ class QuestionBankService
         }
     }
 
+    /**
+     * 回收站列表（仅本人软删题库，API-BANK-008）
+     */
+    public function paginateRecycle(int $userId, array $filters, int $page, int $pageSize): LengthAwarePaginator
+    {
+        $query = QuestionBank::query()
+            ->onlyTrashed()
+            ->where('user_id', $userId);
+
+        if (! empty($filters['keyword'])) {
+            $keyword = $this->escapeLike((string) $filters['keyword']);
+            $query->where('title', 'like', "%{$keyword}%");
+        }
+
+        return $query->orderByDesc('deleted_at')
+            ->paginate($pageSize, ['*'], 'page', $page);
+    }
+
+    /**
+     * 恢复本人软删题库（API-BANK-009）
+     *
+     * 仅恢复本人软删记录；找不到或非本人软删记录抛 DATA_NOT_FOUND。
+     * 删除题库时曾对分类计数 -1（见 delete），恢复时对应 +1 保持一致；
+     * 题库冗余 question_count 软删不动，无需重算。
+     */
+    public function restore(int $id, int $userId): QuestionBank
+    {
+        $bank = QuestionBank::query()
+            ->onlyTrashed()
+            ->whereKey($id)
+            ->where('user_id', $userId)
+            ->first();
+
+        if ($bank === null) {
+            throw new BusinessException(ErrorCode::DATA_NOT_FOUND, '回收站中未找到该题库');
+        }
+
+        $categoryId = (int) $bank->category_id;
+
+        $bank->restore();
+
+        // 与删除时对称地回加分类下题库计数
+        $this->incrementCategoryCount($categoryId, 1);
+
+        return $bank;
+    }
+
     private function assertCategoryExists(int $categoryId): void
     {
         if ($categoryId <= 0) {

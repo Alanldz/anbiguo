@@ -31,13 +31,19 @@ abstract class Controller
         return (int) $this->currentUser($request)->id;
     }
 
-    /** 分页参数：统一 page / page_size，并做上限保护 */
-    protected function pageParams(Request $request): array
+    /**
+     * 分页参数：统一 page / page_size，并做上限保护
+     *
+     * @param  int|null  $max     自定义 page_size 上限；不传则取配置 anbiguo.page.size_max
+     * @param  int|null  $default 自定义 page_size 默认值；不传则取配置 anbiguo.page.size_default
+     */
+    protected function pageParams(Request $request, ?int $max = null, ?int $default = null): array
     {
         $page = max((int) $request->input('page', 1), 1);
-        $max = (int) config('anbiguo.page.size_max', 100);
-        $size = (int) $request->input('page_size', config('anbiguo.page.size_default', 20));
-        $size = max(1, min($size, $max));
+        $sizeMax = $max ?? (int) config('anbiguo.page.size_max', 100);
+        $sizeDefault = $default ?? (int) config('anbiguo.page.size_default', 20);
+        $size = (int) $request->input('page_size', $sizeDefault);
+        $size = max(1, min($size, $sizeMax));
 
         return [$page, $size];
     }

@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Bank\StoreQuestionBankRequest;
 use App\Http\Requests\Bank\UpdateQuestionBankRequest;
 use App\Http\Resources\QuestionBankResource;
+use App\Http\Resources\RecycledBankResource;
 use App\Services\Bank\QuestionBankService;
 use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -15,7 +16,7 @@ use Illuminate\Http\Request;
 
 /**
  * 题库控制器
- * 台账：docs/04-API接口规范与登记表.md §三 API-BANK-002 ~ 007
+ * 台账：docs/04-API接口规范与登记表.md §三 API-BANK-002 ~ 009
  */
 class QuestionBankController extends Controller
 {
@@ -89,5 +90,32 @@ class QuestionBankController extends Controller
         );
 
         return ApiResponse::paginate($paginator, QuestionBankResource::class);
+    }
+
+    /** API-BANK-008 回收站列表（仅本人软删题库） */
+    public function recycle(Request $request): JsonResponse
+    {
+        [$page, $pageSize] = $this->pageParams($request);
+
+        $paginator = $this->bankService->paginateRecycle(
+            $this->currentUserId($request),
+            $request->only(['keyword']),
+            $page,
+            $pageSize
+        );
+
+        return ApiResponse::paginate($paginator, RecycledBankResource::class);
+    }
+
+    /** API-BANK-009 恢复题库 */
+    public function restore(Request $request, int $id): JsonResponse
+    {
+        $bank = $this->bankService->restore($id, $this->currentUserId($request));
+
+        // 返回 {restored:true} + 恢复后的题库对象（与题库详情结构一致）
+        return ApiResponse::success(
+            array_merge(['restored' => true], (new QuestionBankResource($bank))->resolve()),
+            '已恢复题库'
+        );
     }
 }

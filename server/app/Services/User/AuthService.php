@@ -98,6 +98,28 @@ class AuthService
         TokenBlacklist::add($jti, $expiresIn);
     }
 
+    // =========================================================================
+    // API-USER-004 账号注销
+    // =========================================================================
+    /**
+     * 将账号置为「注销中」（status=3）。
+     *
+     * 说明：
+     *  - 注销后立即不可登录：EnsureUserActiveMiddleware 会拦截 CANCELING/CANCELED 状态。
+     *  - 吊销 Token 由控制器复用 logout 的黑名单逻辑完成（保持一致）。
+     *  - 注销原因暂不落库（user_accounts 无该字段），后续如需审计再加字段。
+     *  - 30 天后物理清除由后续迭代定时任务处理，本期不做。
+     *
+     * @param  int  $userId  当前登录用户 ID
+     */
+    public function cancel(int $userId): void
+    {
+        User::where('id', $userId)->update([
+            'status'     => UserStatus::CANCELING->value,
+            'updated_at' => now(),
+        ]);
+    }
+
     /**
      * 更新登录足迹（登录成功后调用）
      */

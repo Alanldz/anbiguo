@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\V1\Bank;
 
 use App\Http\Controllers\Controller;
+use App\Services\Api\FavoriteNoteService;
 use App\Services\Api\QuestionPracticeService;
 use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -12,12 +13,14 @@ use Illuminate\Http\Request;
 
 /**
  * 题目与练习控制器
- * 台账：docs/04-API接口规范与登记表.md §三 API-QUE-001 ~ 005
+ * 台账：docs/04-API接口规范与登记表.md §三 API-QUE-001 ~ 005、API-FAV-001、API-NOTE-001、API-REC-001
  */
 class QuestionPracticeController extends Controller
 {
-    public function __construct(private readonly QuestionPracticeService $service)
-    {
+    public function __construct(
+        private readonly QuestionPracticeService $service,
+        private readonly FavoriteNoteService $favNoteService
+    ) {
     }
 
     /** API-QUE-001 题目列表（练习取题） */
@@ -93,5 +96,50 @@ class QuestionPracticeController extends Controller
         $this->service->report($this->currentUserId($request), $id, $data);
 
         return ApiResponse::ok('已提交，感谢反馈');
+    }
+
+    /** API-FAV-001 我的收藏列表（默认每页 10 条，上限 50） */
+    public function favorites(Request $request): JsonResponse
+    {
+        [$page, $pageSize] = $this->pageParams($request, 50, 10);
+
+        $paginator = $this->favNoteService->favorites(
+            $this->currentUserId($request),
+            $request->only(['bank_id', 'keyword']),
+            $page,
+            $pageSize
+        );
+
+        return ApiResponse::paginate($paginator);
+    }
+
+    /** API-NOTE-001 我的笔记列表（默认每页 10 条，上限 50） */
+    public function notes(Request $request): JsonResponse
+    {
+        [$page, $pageSize] = $this->pageParams($request, 50, 10);
+
+        $paginator = $this->favNoteService->notes(
+            $this->currentUserId($request),
+            $request->only(['bank_id', 'keyword']),
+            $page,
+            $pageSize
+        );
+
+        return ApiResponse::paginate($paginator);
+    }
+
+    /** API-REC-001 练习记录列表 */
+    public function practiceRecords(Request $request): JsonResponse
+    {
+        [$page, $pageSize] = $this->pageParams($request);
+
+        $paginator = $this->service->practiceRecords(
+            $this->currentUserId($request),
+            $request->only(['bank_id', 'status']),
+            $page,
+            $pageSize
+        );
+
+        return ApiResponse::paginate($paginator);
     }
 }

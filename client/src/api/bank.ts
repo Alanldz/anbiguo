@@ -5,8 +5,8 @@
 
 import { http, requestPage } from '@/utils/request'
 import { USE_MOCK, mockDelay } from './config'
-import { mockBanks, mockCategories } from '@/mock'
-import type { BankCategory, PageData, PageParams, QuestionBank } from '@/types'
+import { mockBanks, mockCategories, mockRecycleBanks } from '@/mock'
+import type { BankCategory, PageData, PageParams, QuestionBank, RecycleBankItem } from '@/types'
 
 /** API-BANK-001 题库分类列表 */
 export function fetchCategories(): Promise<BankCategory[]> {
@@ -67,4 +67,35 @@ export function fetchMarketBanks(
     })
   }
   return requestPage<QuestionBank>('/api/v1/bank-market', params)
+}
+
+/** API-BANK-008 回收站列表 */
+export function fetchRecycleBanks(
+  params: PageParams & { keyword?: string }
+): Promise<PageData<RecycleBankItem>> {
+  if (USE_MOCK) {
+    const { page = 1, page_size = 20, keyword } = params
+    const filtered = keyword
+      ? mockRecycleBanks.filter((item) => item.title.includes(keyword.trim()))
+      : mockRecycleBanks
+    return mockDelay({
+      list: filtered.slice((page - 1) * page_size, page * page_size),
+      pagination: {
+        page,
+        page_size,
+        total: filtered.length,
+        total_pages: Math.ceil(filtered.length / page_size)
+      }
+    })
+  }
+  return requestPage<RecycleBankItem>('/api/v1/question-banks/recycle', params)
+}
+
+/** API-BANK-009 恢复题库 */
+export function restoreBank(id: number): Promise<{ restored: true } & QuestionBank> {
+  if (USE_MOCK) {
+    const bank = mockRecycleBanks.find((item) => item.id === id) ?? mockRecycleBanks[0]
+    return mockDelay({ restored: true, ...bank })
+  }
+  return http.put<{ restored: true } & QuestionBank>(`/api/v1/question-banks/${id}/restore`)
 }

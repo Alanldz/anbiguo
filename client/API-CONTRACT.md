@@ -306,7 +306,81 @@ MemberLevel：0 普通 / 1 月卡 / 2 季卡 / 3 年卡 / 4 永久
 
 ---
 
-## 十、实现落地文件
+## 十、P0 补漏接口（API-FAV-001 / NOTE-001 / REC-001 / USER-004 / BANK-008 ~ 009）
+
+> 下列接口为「列表 / 注销 / 回收站」类补齐，字段名须逐字与客户端一致。
+> 分页结构与全局约定一致：`data = { list: [], pagination: { page, page_size, total, total_pages } }`。
+
+### API-FAV-001 `GET /favorites`（需登录）
+- query：`page`(默认1)、`page_size`(默认10，≤50)、`bank_id?`、`keyword?`(题干模糊，已转义 %/_)
+- 数据源：`user_favorite_questions`(软删过滤) JOIN `question_items` JOIN `bank_question_banks` JOIN `question_options`
+- resp：`{ list: FavoriteItem[], pagination:{page,page_size,total,total_pages} }`
+- `FavoriteItem`：
+```jsonc
+{
+  "id": 12, "question_id": 8801, "bank_id": 1024, "bank_name": "一建法规",
+  "question_type": 1, "question_title": "题干文本",
+  "question_options": [ { "key": "A", "content": "选项" } ],
+  "question_difficulty": 2, "folder_name": "默认收藏夹",
+  "created_at": "2026-09-15 10:00:00"
+}
+```
+- 枚举 `question_type`：1 单选 / 2 多选 / 3 判断 / 4 填空 / 5 简答（数值输出，文本映射前端做）
+
+### API-NOTE-001 `GET /notes`（需登录）
+- query：`page`、`page_size`(默认10，≤50)、`bank_id?`、`keyword?`(content 模糊，已转义)
+- 数据源：`user_question_notes` JOIN `question_items` JOIN `bank_question_banks`
+- resp：`{ list: NoteItem[], pagination }`
+- `NoteItem`：
+```jsonc
+{
+  "id": 7, "question_id": 8801, "bank_id": 1024, "bank_name": "一建法规",
+  "question_title": "题干文本", "content": "笔记内容", "like_count": 3,
+  "created_at": "2026-09-15 10:00:00", "updated_at": "2026-09-15 11:00:00"
+}
+```
+
+### API-REC-001 `GET /practice-records`（需登录）
+- query：`page`、`page_size`、`bank_id?`、`status?`(1=进行中 2=已完成 3=已放弃)
+- 数据源：`user_practice_records` LEFT JOIN `bank_question_banks`（bank_id=0 时 bank_name 为空串）
+- resp：`{ list: PracticeRecord[], pagination }`
+- `PracticeRecord`：
+```jsonc
+{
+  "id": 33, "bank_id": 1024, "bank_name": "一建法规",
+  "practice_mode": 1, "total_count": 50, "answered_count": 50,
+  "right_count": 41, "wrong_count": 9, "correct_rate": 82.00,
+  "duration_seconds": 1830, "status": 2,
+  "started_at": "2026-09-15 10:00:00", "finished_at": "2026-09-15 10:30:00"
+}
+```
+- 枚举 `practice_mode`：1 顺序 / 2 随机 / 3 专项 / 4 错题重做 / 5 闪卡 / 6 斩题
+- 枚举 `status`：1 进行中 / 2 已完成 / 3 已放弃（数值输出）
+- 时间 `Y-m-d H:i:s` 字符串，`null` 输出 `null`；`correct_rate` 为百分比数值（如 82.00）
+
+### API-USER-004 `POST /user/cancel`（需登录）
+- req：`{ confirm*: true（必须字面 true）, reason?: string(≤200) }`
+- 逻辑：confirm 非字面 true 抛 `PARAM_INVALID`；置 `user_accounts.status=3 注销中`；吊销当前 Token（复用 logout 黑名单逻辑）。
+  - **注销后立即不可登录**：`EnsureUserActiveMiddleware` 拦截 CANCELING/CANCELED 状态，全部既有 Token 随即失效。
+  - `reason` 本期不落库（`user_accounts` 无该字段），后续如需审计再加字段。
+  - 30 天后物理清除由后续迭代定时任务处理（本期不做）。
+- resp：`{ canceled: true, message: "账号已注销" }`
+
+### API-BANK-008 `GET /question-banks/recycle`（需登录）
+- query：`page`、`page_size`、`keyword?`(名称模糊)
+- 数据源：`bank_question_banks` **onlyTrashed** 且 `user_id=本人`
+- resp：`{ list: RecycledBank[], pagination }`（`RecycledBank` 同「我的题库列表」项结构 + `deleted_at`）
+- `RecycledBank`：复用 `QuestionBankResource` 全部字段，并额外返回：
+  - `deleted_at`：`Y-m-d H:i:s` 字符串（软删时间）
+
+### API-BANK-009 `PUT /api/v1/question-banks/{id}/restore`（需登录）
+- 仅恢复本人软删题库：找不到或非本人软删记录抛 `DATA_NOT_FOUND`
+- `restore()` 后回加分类题库计数（与删除时对称 -1/+1）；题库冗余 `question_count` 软删不动，无需重算
+- resp：`{ restored: true, ...QuestionBank }`（返回结构与题库详情 `QuestionBankResource` 一致）
+
+---
+
+## 十一、实现落地文件
 - Service：`server/app/Services/Api/{UserProfileService,ImportService,QuestionPracticeService,WrongQuestionService,ExamService,MemberService,OrderService,QuestionSearchService}.php`
 - Controller：`server/app/Http/Controllers/Api/V1/{User/ProfileController,Import/ImportController,Bank/QuestionPracticeController,Wrong/WrongQuestionController,Exam/ExamController,Member/MemberController,Order/OrderController,Search/SearchController}.php`
 - 路由：`server/routes/client.php`（追加 member/orders/ search 区块）

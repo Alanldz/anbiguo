@@ -121,6 +121,12 @@
 | API-MBR-001 | 会员 | 会员权益与套餐 | GET | `/api/v1/member/plans` | 是 | — | 已开发 | 2026-09-15 建立 |
 | API-MBR-002 | 会员 | 开通会员下单 | POST | `/api/v1/member/orders` | 是 | — | 已开发 | 2026-09-15 建立 |
 | API-ORD-001 | 订单 | 我的订单列表 | GET | `/api/v1/orders` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-FAV-001 | 收藏 | 我的收藏列表 | GET | `/api/v1/favorites` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-NOTE-001 | 笔记 | 我的笔记列表 | GET | `/api/v1/notes` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-REC-001 | 练习 | 练习记录列表 | GET | `/api/v1/practice-records` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-USER-004 | 用户 | 账号注销 | POST | `/api/v1/user/cancel` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-BANK-008 | 题库 | 回收站列表 | GET | `/api/v1/question-banks/recycle` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-BANK-009 | 题库 | 恢复题库 | PUT | `/api/v1/question-banks/{id}/restore` | 是 | — | 已开发 | 2026-09-15 建立 |
 | API-PAY-001 | 支付 | 微信支付统一下单 | POST | `/api/v1/pay/wechat/prepay` | 是 | — | 待开发 | 2026-09-15 建立 |
 | API-PAY-002 | 支付 | 微信支付回调 | POST | `/api/v1/pay/wechat/notify` | 否（验签） | — | 待开发 | 2026-09-15 建立 |
 | API-CFG-001 | 配置 | 客户端启动配置 | GET | `/api/v1/config/boot` | 否 | — | 已开发 | 2026-09-15 建立 |
@@ -304,7 +310,7 @@
 | API-EXM-004 | GET `/api/v1/exam-records/{id}` | 已开发 | `Api/V1/Exam/ExamController::showRecord` |
 | API-EXM-005 | GET `/api/v1/exam-records` | 已开发 | `Api/V1/Exam/ExamController::records` |
 
-> 客户端 44 + 用户后台 50（§四，含认证 3）+ 总后台 33（§五）= **127 个接口中已开发 124 个**。剩余待开发仅 3 个：客户端搜题 API-SRC-002（依赖 AI 大模型）+ 支付 API-PAY-001~002（依赖微信支付商户号）。全部状态为「已开发」，均待联调。
+> 客户端 50 + 用户后台 50（§四，含认证 3）+ 总后台 33（§五）= **133 个接口中已开发 130 个**。剩余待开发仅 3 个：客户端搜题 API-SRC-002（依赖 AI 大模型）+ 支付 API-PAY-001~002（依赖微信支付商户号）。全部状态为「已开发」，均待联调。
 
 ### 8.1 待补齐清单（按优先级）
 

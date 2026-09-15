@@ -59,6 +59,7 @@
           "style": { "navigationStyle": "custom", "navigationBarTitleText": "题库详情" }
         },
         { "path": "bank/market", "style": { "navigationBarTitleText": "题库市场" } },
+        { "path": "bank/recycle", "style": { "navigationBarTitleText": "回收站" } },
         { "path": "practice/answer", "style": { "navigationBarTitleText": "练习" } },
         { "path": "practice/result", "style": { "navigationBarTitleText": "练习结果" } },
         { "path": "exam/create", "style": { "navigationBarTitleText": "发起考试" } },

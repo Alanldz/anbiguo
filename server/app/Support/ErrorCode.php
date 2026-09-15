@@ -36,6 +36,7 @@ final class ErrorCode
     public const DATA_NOT_FOUND       = 10004;  // 数据不存在
     public const DATA_EXISTS          = 10005;  // 数据已存在
     public const OPERATION_FORBIDDEN  = 10006;  // 当前状态不允许该操作
+    public const PARAM_INVALID         = 10007;  // 参数不合法（字面校验未通过）
 
     public const UNAUTHORIZED         = 10401;  // 登录失效
     public const NO_PERMISSION        = 10403;  // 无权限
@@ -140,6 +141,7 @@ final class ErrorCode
         self::DATA_NOT_FOUND       => '数据不存在',
         self::DATA_EXISTS          => '数据已存在',
         self::OPERATION_FORBIDDEN  => '当前状态不允许该操作',
+        self::PARAM_INVALID         => '参数不合法',
 
         self::UNAUTHORIZED         => '登录状态已失效，请重新登录',
         self::NO_PERMISSION        => '没有操作权限',

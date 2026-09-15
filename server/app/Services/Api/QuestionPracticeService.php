@@ -319,4 +319,52 @@ class QuestionPracticeService
 
         return mb_strtoupper(preg_replace('/\s+/', '', $answer));
     }
+
+    /**
+     * 练习记录列表（分页，API-REC-001）
+     *
+     * 数据源 user_practice_records LEFT JOIN bank_question_banks 取题库名；
+     * 记录 bank_id=0（如专项/随机无指定题库）时 bank_name 给空字符串。
+     */
+    public function practiceRecords(int $userId, array $filters, int $page, int $pageSize): LengthAwarePaginator
+    {
+        $query = UserPracticeRecord::query()
+            ->leftJoin('bank_question_banks', 'bank_question_banks.id', '=', 'user_practice_records.bank_id')
+            ->where('user_practice_records.user_id', $userId)
+            ->whereNull('user_practice_records.deleted_at')
+            ->select(
+                'user_practice_records.*',
+                'bank_question_banks.title as bank_name'
+            );
+
+        if (! empty($filters['bank_id'])) {
+            $query->where('user_practice_records.bank_id', (int) $filters['bank_id']);
+        }
+
+        if (! empty($filters['status'])) {
+            $query->where('user_practice_records.status', (int) $filters['status']);
+        }
+
+        return $query->orderByDesc('user_practice_records.started_at')
+            ->orderByDesc('user_practice_records.id')
+            ->paginate($pageSize, ['*'], 'page', $page)
+            ->through(function ($row) {
+                /** @var \stdClass $row */
+                return [
+                    'id'               => (int) $row->id,
+                    'bank_id'          => (int) $row->bank_id,
+                    'bank_name'        => $row->bank_name ?? '',
+                    'practice_mode'    => (int) $row->practice_mode,
+                    'total_count'      => (int) $row->total_count,
+                    'answered_count'   => (int) $row->answered_count,
+                    'right_count'      => (int) $row->right_count,
+                    'wrong_count'      => (int) $row->wrong_count,
+                    'correct_rate'     => (float) $row->correct_rate,
+                    'duration_seconds' => (int) $row->duration_seconds,
+                    'status'           => (int) $row->status,
+                    'started_at'       => $row->started_at ? (string) $row->started_at : null,
+                    'finished_at'      => $row->finished_at ? (string) $row->finished_at : null,
+                ];
+            });
+    }
 }

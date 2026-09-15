@@ -79,6 +79,10 @@ Route::middleware(['auth:client', 'user.active'])->group(function () {
     // API-BANK-007 题库市场列表（官方 / 推荐题库）
     Route::get('bank-market', [QuestionBankController::class, 'market'])->name('bank-market.index');
 
+    // API-BANK-008 回收站列表（务必放在 question-banks/{id} 之前，避免被 {id} 吞掉）
+    Route::get('question-banks/recycle', [QuestionBankController::class, 'recycle'])
+        ->name('question-banks.recycle');
+
     // API-BANK-003 题库详情
     Route::get('question-banks/{id}', [QuestionBankController::class, 'show'])
         ->whereNumber('id')->name('question-banks.show');
@@ -90,6 +94,10 @@ Route::middleware(['auth:client', 'user.active'])->group(function () {
     // API-BANK-006 删除题库
     Route::delete('question-banks/{id}', [QuestionBankController::class, 'destroy'])
         ->whereNumber('id')->name('question-banks.destroy');
+
+    // API-BANK-009 恢复题库
+    Route::put('question-banks/{id}/restore', [QuestionBankController::class, 'restore'])
+        ->whereNumber('id')->name('question-banks.restore');
 });
 
 // =============================================================================
@@ -122,6 +130,9 @@ Route::middleware(['auth:client', 'user.active'])->group(function () {
 
     // API-USER-003 我的学习空间统计
     Route::get('user/study-summary', [ProfileController::class, 'studySummary'])->name('user.study-summary');
+
+    // API-USER-004 账号注销
+    Route::post('user/cancel', [ProfileController::class, 'cancel'])->name('user.cancel');
 });
 
 // =============================================================================
@@ -168,6 +179,16 @@ Route::middleware(['auth:client', 'user.active'])->group(function () {
     // API-QUE-005 试题报错
     Route::post('questions/{id}/report', [QuestionPracticeController::class, 'report'])
         ->whereNumber('id')->name('questions.report');
+
+    // API-FAV-001 我的收藏列表
+    Route::get('favorites', [QuestionPracticeController::class, 'favorites'])->name('favorites.index');
+
+    // API-NOTE-001 我的笔记列表
+    Route::get('notes', [QuestionPracticeController::class, 'notes'])->name('notes.index');
+
+    // API-REC-001 练习记录列表
+    Route::get('practice-records', [QuestionPracticeController::class, 'practiceRecords'])
+        ->name('practice-records.index');
 });
 
 // =============================================================================
