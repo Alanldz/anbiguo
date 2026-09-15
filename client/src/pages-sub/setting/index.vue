@@ -29,11 +29,11 @@
         <text class="setting__row-label">版本号</text>
         <text class="setting__row-value">1.0.0</text>
       </view>
-      <view class="setting__row" @tap="handleAgreement('用户协议')">
+      <view class="setting__row" @tap="handleAgreement('service')">
         <text class="setting__row-label">用户协议</text>
         <text class="setting__row-arrow">›</text>
       </view>
-      <view class="setting__row" @tap="handleAgreement('隐私政策')">
+      <view class="setting__row" @tap="handleAgreement('privacy')">
         <text class="setting__row-label">隐私政策</text>
         <text class="setting__row-arrow">›</text>
       </view>

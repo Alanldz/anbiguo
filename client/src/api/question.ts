@@ -5,8 +5,8 @@
 
 import { http, requestPage } from '@/utils/request'
 import { USE_MOCK, mockDelay } from './config'
-import { mockQuestions } from '@/mock'
-import type { PageData, PageParams, Question, QuestionType } from '@/types'
+import { mockErrorProne, mockQuestions } from '@/mock'
+import type { ErrorProneItem, PageData, PageParams, Question, QuestionType } from '@/types'
 
 /** API-QUE-001 题目列表（练习取题） */
 export function fetchQuestions(
@@ -74,4 +74,25 @@ export function fetchWrongQuestions(
 /** API-WRG-002 移除错题 */
 export function removeWrongQuestion(id: number): Promise<void> {
   return http.del<void>(`/api/v1/wrong-questions/${id}`)
+}
+
+/** API-ERR-001 易错题集（bank_id 必填） */
+export function fetchErrorProne(bankId: number, params: PageParams = {}): Promise<PageData<ErrorProneItem>> {
+  if (USE_MOCK) {
+    const { page = 1, page_size = 20 } = params
+    const filtered = mockErrorProne.filter((item) => item.bank_id === bankId)
+    return mockDelay({
+      list: filtered.slice((page - 1) * page_size, page * page_size),
+      pagination: {
+        page,
+        page_size,
+        total: filtered.length,
+        total_pages: Math.ceil(filtered.length / page_size)
+      }
+    })
+  }
+  return requestPage<ErrorProneItem>('/api/v1/error-prone-questions', {
+    ...params,
+    bank_id: bankId
+  })
 }

@@ -380,7 +380,99 @@ MemberLevel：0 普通 / 1 月卡 / 2 季卡 / 3 年卡 / 4 永久
 
 ---
 
-## 十一、实现落地文件
-- Service：`server/app/Services/Api/{UserProfileService,ImportService,QuestionPracticeService,WrongQuestionService,ExamService,MemberService,OrderService,QuestionSearchService}.php`
-- Controller：`server/app/Http/Controllers/Api/V1/{User/ProfileController,Import/ImportController,Bank/QuestionPracticeController,Wrong/WrongQuestionController,Exam/ExamController,Member/MemberController,Order/OrderController,Search/SearchController}.php`
-- 路由：`server/routes/client.php`（追加 member/orders/ search 区块）
+## 十一、P1 补齐接口（API-MSG-001 ~ 004 / MST-001 ~ 002 / ERR-001）
+
+> 消息通知中心、斩题机制、易错题集三组补齐接口。
+> 分页结构与全局约定一致：`data = { list: [], pagination: { page, page_size, total, total_pages } }`。
+> 数据库变更：新增表 `user_notifications`（迁移 `2026_09_15_100002`）；`user_wrong_questions` 加列
+> `right_streak`（连续答对次数）/ `mastered_at`（掌握时间）（迁移 `2026_09_15_100003`），状态语义沿用 1=在错题本 2=已移除 3=已掌握。
+
+### 消息通知中心 · API-MSG
+
+### API-MSG-001 `GET /notifications`（需登录）
+- query：`page`、`page_size`、`type?`（通知类型筛选）、`is_read?`（0 未读 / 1 已读筛选）
+- 数据源：`user_notifications`（软删过滤，强制 `user_id=本人`），按 `created_at` 降序
+- resp：`{ list: Notification[], pagination }`
+- `Notification`：
+```jsonc
+{
+  "id": 101, "type": 3, "title": "订单支付成功",
+  "content": "您购买的「一建法规·年卡」已开通", "biz_type": "order",
+  "biz_id": 5001, "is_read": 0, "read_at": null,
+  "created_at": "2026-09-15 10:00:00"
+}
+```
+- 枚举 `type`：1 系统通知 / 2 互动通知 / 3 业务通知（数值输出，文本映射前端做）
+- 枚举 `is_read`：0 未读 / 1 已读；`read_at` 已读时间（未读为 `null`）
+
+### API-MSG-002 `GET /notifications/unread-count`（需登录）
+- resp：`{ "count": 5 }`（本人未读通知条数）
+
+### API-MSG-003 `PUT /notifications/{id}/read`（需登录）
+- 标记单条已读：置 `is_read=1`、`read_at=now`
+- 仅本人记录可操作，找不到（含他人记录）抛 `DATA_NOT_FOUND`；幂等——已读再调返回成功不报错
+- resp：`{ "marked": true }`
+
+### API-MSG-004 `PUT /notifications/read-all`（需登录）
+- 全部已读：批量更新本人全部未读记录
+- resp：`{ "marked": 12 }`（本次标记条数，无未读时为 0）
+
+### 斩题机制 · API-MST
+
+> 斩题为作答联动，无独立提交接口：错题（status=1）**连续答对 3 次**自动置为已掌握（status=3），
+> 期间再答错则计数归零；已掌握题目再答错恢复为在错题本。联动在作答（API-QUE-002）事务内完成，
+> 仅对存在错题记录的题目生效。
+
+### API-MST-001 `GET /mastered-questions`（需登录）
+- query：`page`、`page_size`(默认10，≤50)、`bank_id?`、`keyword?`(题干模糊，已转义 %/_)
+- 数据源：`user_wrong_questions`（status=3 已掌握，软删过滤）JOIN `question_items` JOIN `bank_question_banks`
+- resp：`{ list: MasteredItem[], pagination }`
+- `MasteredItem`（扁平风格，同 §十 FavoriteItem）：
+```jsonc
+{
+  "id": 66, "question_id": 8801, "bank_id": 1024, "bank_name": "一建法规",
+  "question_title": "题干文本", "question_type": 1,
+  "question_options": [ { "key": "A", "content": "选项" } ],
+  "question_difficulty": 2,
+  "wrong_count": 4, "right_streak": 3, "mastered_at": "2026-09-15 10:00:00"
+}
+```
+- 排序：`mastered_at` 降序
+- 枚举 `question_type`：1 单选 / 2 多选 / 3 判断 / 4 填空 / 5 简答
+- 枚举 `question_difficulty`：1 易 / 2 中 / 3 难
+
+### API-MST-002 `PUT /mastered-questions/{id}/restore`（需登录）
+- 找回：仅本人 + `status=3` 的记录可找回，否则抛 `DATA_NOT_FOUND`；
+  置回 `status=1 在错题本`，并清零 `right_streak=0`、`mastered_at=null`
+- resp：`{ "restored": true }`
+- 枚举（错题状态，沿用 WrongQuestionStatus）：1 在错题本 / 2 已移除 / 3 已掌握
+
+### 易错题集 · API-ERR
+
+### API-ERR-001 `GET /error-prone-questions`（需登录）
+- query：`bank_id*`（必填，易错题按题库维度查看，缺失抛 `PARAM_INVALID`）、`page`、`page_size`(默认10，≤50)、`limit_top?`（前 N 截断，本期服务端未使用，预留）
+- 校验：题库不存在抛 `BANK_NOT_FOUND`；非本人私有题库抛 `FORBIDDEN`（官方题库 user_id=0 放行）
+- 数据源：`question_items` 全站冗余统计列（`answer_count`/`right_count`/`correct_rate`），
+  `status=1` 且未软删且 `answer_count>0`，按 `correct_rate` 升序、`answer_count` 降序
+- resp：`{ list: ErrorProneItem[], pagination }`
+- `ErrorProneItem`：
+```jsonc
+{
+  "id": 8801, "bank_id": 1024,
+  "question_title": "题干文本（stem_preview 优先，为空取 stem 截断 100 字）",
+  "question_type": 1,
+  "question_options": [ { "key": "A", "content": "选项" } ],
+  "question_difficulty": 2,
+  "correct_rate": 32.50, "answer_count": 200, "is_wrong": true
+}
+```
+- `correct_rate` 为全站百分比数值（如 32.50，非本人正确率）；`is_wrong` 为布尔——该题在本人的错题本中且 status=1（服务端一次 in 查询批量判定）
+- 枚举 `question_type`：1 单选 / 2 多选 / 3 判断 / 4 填空 / 5 简答
+- 枚举 `question_difficulty`：1 易 / 2 中 / 3 难
+
+---
+
+## 十二、实现落地文件
+- Service：`server/app/Services/Api/{UserProfileService,ImportService,QuestionPracticeService,WrongQuestionService,FavoriteNoteService,ExamService,MemberService,OrderService,QuestionSearchService,NotificationService}.php`
+- Controller：`server/app/Http/Controllers/Api/V1/{User/ProfileController,Import/ImportController,Bank/QuestionPracticeController,Wrong/WrongQuestionController,Exam/ExamController,Member/MemberController,Order/OrderController,Search/SearchController,Notification/NotificationController}.php`
+- 路由：`server/routes/client.php`（追加 member/orders/search/notifications 区块及错题域 MST/ERR 路由）

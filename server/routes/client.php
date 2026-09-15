@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\Exam\ExamController;
 use App\Http\Controllers\Api\V1\File\FileController;
 use App\Http\Controllers\Api\V1\Import\ImportController;
 use App\Http\Controllers\Api\V1\Member\MemberController;
+use App\Http\Controllers\Api\V1\Notification\NotificationController;
 use App\Http\Controllers\Api\V1\Order\OrderController;
 use App\Http\Controllers\Api\V1\Search\SearchController;
 use App\Http\Controllers\Api\V1\User\AuthController;
@@ -201,6 +202,38 @@ Route::middleware(['auth:client', 'user.active'])->group(function () {
     // API-WRG-002 移除错题
     Route::delete('wrong-questions/{id}', [WrongQuestionController::class, 'remove'])
         ->whereNumber('id')->name('wrong-questions.remove');
+
+    // API-MST-001 我的斩题列表（已掌握题目）
+    Route::get('mastered-questions', [WrongQuestionController::class, 'mastered'])
+        ->name('mastered-questions.index');
+
+    // API-MST-002 找回已掌握题目
+    Route::put('mastered-questions/{id}/restore', [WrongQuestionController::class, 'restoreMastered'])
+        ->whereNumber('id')->name('mastered-questions.restore');
+
+    // API-ERR-001 易错题集（按题库维度，correct_rate 升序）
+    Route::get('error-prone-questions', [WrongQuestionController::class, 'errorProne'])
+        ->name('error-prone-questions.index');
+});
+
+// =============================================================================
+// 消息通知模块 · API-MSG-*（需登录）
+// =============================================================================
+Route::middleware(['auth:client', 'user.active'])->prefix('notifications')->name('notifications.')->group(function () {
+    // API-MSG-002 未读通知数量（放在无参路由组，避免与带参路由混淆）
+    Route::get('unread-count', [NotificationController::class, 'unreadCount'])
+        ->name('unread-count');
+
+    // API-MSG-004 全部已读
+    Route::put('read-all', [NotificationController::class, 'readAll'])
+        ->name('read-all');
+
+    // API-MSG-001 通知列表
+    Route::get('/', [NotificationController::class, 'index'])->name('index');
+
+    // API-MSG-003 标记单条已读（幂等）
+    Route::put('{id}/read', [NotificationController::class, 'markRead'])
+        ->whereNumber('id')->name('read');
 });
 
 // =============================================================================

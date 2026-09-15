@@ -100,7 +100,7 @@ const functionEntries: GridMenuItem[] = [
   { key: 'vip', label: '会员中心', iconText: 'V', color: '#F7B500', bgColor: '#FFF8E6', path: '/pages-sub/member/index' },
   { key: 'simple', label: '精简题', iconText: '简', path: '' },
   { key: 'chapter', label: '专项练习', iconText: '专', path: '/pages-sub/practice/answer?mode=chapter' },
-  { key: 'easy-wrong', label: '易错题', iconText: '易', path: '/pages-sub/wrong/list' },
+  { key: 'easy-wrong', label: '易错题', iconText: '易', path: '' },
   { key: 'flash', label: '试题闪卡', iconText: '闪', path: '' },
   { key: 'points', label: '考点速记', iconText: '点', path: '' },
   { key: 'offline', label: '离线练习', iconText: '离', path: '' },
@@ -129,6 +129,11 @@ function goResource() {
 }
 
 function handleEntry(item: { key?: string; label: string; path?: string }) {
+  // 易错题集需要携带当前题库 id
+  if (item.key === 'easy-wrong') {
+    uni.navigateTo({ url: `/pages-sub/bank/error-prone?bank_id=${bankId.value}` })
+    return
+  }
   if (item.path) {
     uni.navigateTo({ url: item.path })
     return

@@ -163,7 +163,7 @@ function goAi() {
 }
 
 function goMessage() {
-  uni.showToast({ title: '消息中心开发中', icon: 'none' })
+  uni.navigateTo({ url: '/pages-sub/notification/list' })
 }
 
 function goConsole() {
@@ -230,14 +230,25 @@ function goPracticeRecord() {
     color: $color-text-inverse;
   }
 
-  &__bell-dot {
+  &__bell-badge {
     position: absolute;
-    top: 12rpx;
-    right: 12rpx;
-    width: 16rpx;
-    height: 16rpx;
-    border-radius: $radius-circle;
+    top: -8rpx;
+    right: -8rpx;
+    min-width: 32rpx;
+    height: 32rpx;
+    padding: 0 8rpx;
+    border-radius: 16rpx;
     background-color: $color-danger;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  &__bell-badge-text {
+    font-size: 20rpx;
+    line-height: 1;
+    color: $color-text-inverse;
   }
 
   &__quick {

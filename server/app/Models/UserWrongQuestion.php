@@ -35,7 +35,9 @@ class UserWrongQuestion extends Model
         'question_id',
         'bank_id',
         'wrong_count',
+        'right_streak',
         'last_wrong_at',
+        'mastered_at',
         'source_type',
         'last_answer',
         'status',
@@ -46,7 +48,9 @@ class UserWrongQuestion extends Model
     {
         return [
             'last_wrong_at' => 'datetime',
+            'mastered_at' => 'datetime',
             'wrong_count' => 'integer',
+            'right_streak' => 'integer',
         ];
     }
 

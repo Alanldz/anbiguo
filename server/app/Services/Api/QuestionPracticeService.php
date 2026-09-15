@@ -27,9 +27,16 @@ use Illuminate\Support\Facades\DB;
 /**
  * 题目与练习服务
  * 台账：docs/04-API接口规范与登记表.md §三 API-QUE-001 ~ 005
+ * 另含斩题作答联动机制（docs/04 §二 API-MST-001 ~ 002 的斩题计数在作答事务内推进）
  */
 class QuestionPracticeService
 {
+    /**
+     * 斩题阈值：错题连续答对 3 次自动斩掉（status=3 已掌握），
+     * 后续可入 sys_configs 可配置。
+     */
+    private const MASTER_STREAK = 3;
+
     /**
      * 练习取题列表（支持章节 / 题型筛选与分页；mode=sequence|random|chapter）
      */
@@ -102,6 +109,9 @@ class QuestionPracticeService
             // ③ 答错维护错题本（同题重复错累计 wrong_count，不重复建行）
             if (! $correct) {
                 $this->upsertWrong($userId, $question, $userAnswer);
+            } else {
+                // ③' 答对联动斩题：仅对已存在错题记录的题目计数，正常答对无记录的题目不建行
+                $this->progressMaster($userId, $question->id);
             }
 
             // ④ 题目冗余计数
@@ -293,7 +303,37 @@ class QuestionPracticeService
         $wq->wrong_count = (int) $wq->wrong_count + 1;
         $wq->last_wrong_at = now();
         $wq->last_answer = $userAnswer;
+        // 答错归零斩题计数；已掌握（status=3）的题目重新答错则恢复为在错题本
+        $wq->right_streak = 0;
+        $wq->mastered_at = null;
         $wq->status = WrongQuestionStatus::IN_BOOK->value;
+        $wq->save();
+    }
+
+    /**
+     * 答对联动斩题（API-MST 机制）：仅对存在错题记录的题目生效。
+     * 在错题本（status=1）→ 连续答对次数 +1；达到阈值置为已掌握（status=3）。
+     * 调用方保证在作答事务内执行，保持与错题写入一致的事务边界。
+     */
+    private function progressMaster(int $userId, int $questionId): void
+    {
+        $wq = UserWrongQuestion::where('user_id', $userId)
+            ->where('question_id', $questionId)
+            ->whereNull('deleted_at')
+            ->first();
+
+        // 无错题记录的正常答对不做任何处理
+        if ($wq === null || (int) $wq->status !== WrongQuestionStatus::IN_BOOK->value) {
+            return;
+        }
+
+        $wq->right_streak = (int) $wq->right_streak + 1;
+
+        if ((int) $wq->right_streak >= self::MASTER_STREAK) {
+            $wq->status = WrongQuestionStatus::MASTERED->value;
+            $wq->mastered_at = now();
+        }
+
         $wq->save();
     }
 

@@ -127,6 +127,13 @@
 | API-USER-004 | 用户 | 账号注销 | POST | `/api/v1/user/cancel` | 是 | — | 已开发 | 2026-09-15 建立 |
 | API-BANK-008 | 题库 | 回收站列表 | GET | `/api/v1/question-banks/recycle` | 是 | — | 已开发 | 2026-09-15 建立 |
 | API-BANK-009 | 题库 | 恢复题库 | PUT | `/api/v1/question-banks/{id}/restore` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-MSG-001 | 通知 | 通知列表 | GET | `/api/v1/notifications` | 是 | — | 已开发 | 2026-09-15 建立（P1 补齐） |
+| API-MSG-002 | 通知 | 未读通知数量 | GET | `/api/v1/notifications/unread-count` | 是 | — | 已开发 | 2026-09-15 建立（P1 补齐） |
+| API-MSG-003 | 通知 | 标记单条已读 | PUT | `/api/v1/notifications/{id}/read` | 是 | 幂等 | 已开发 | 2026-09-15 建立（P1 补齐） |
+| API-MSG-004 | 通知 | 全部已读 | PUT | `/api/v1/notifications/read-all` | 是 | — | 已开发 | 2026-09-15 建立（P1 补齐） |
+| API-MST-001 | 斩题 | 我的斩题列表（已掌握） | GET | `/api/v1/mastered-questions` | 是 | — | 已开发 | 2026-09-15 建立（P1 补齐） |
+| API-MST-002 | 斩题 | 找回已掌握题目 | PUT | `/api/v1/mastered-questions/{id}/restore` | 是 | — | 已开发 | 2026-09-15 建立（P1 补齐） |
+| API-ERR-001 | 易错题 | 易错题集（按题库维度） | GET | `/api/v1/error-prone-questions` | 是 | — | 已开发 | 2026-09-15 建立（P1 补齐） |
 | API-PAY-001 | 支付 | 微信支付统一下单 | POST | `/api/v1/pay/wechat/prepay` | 是 | — | 待开发 | 2026-09-15 建立 |
 | API-PAY-002 | 支付 | 微信支付回调 | POST | `/api/v1/pay/wechat/notify` | 否（验签） | — | 待开发 | 2026-09-15 建立 |
 | API-CFG-001 | 配置 | 客户端启动配置 | GET | `/api/v1/config/boot` | 否 | — | 已开发 | 2026-09-15 建立 |
@@ -310,7 +317,7 @@
 | API-EXM-004 | GET `/api/v1/exam-records/{id}` | 已开发 | `Api/V1/Exam/ExamController::showRecord` |
 | API-EXM-005 | GET `/api/v1/exam-records` | 已开发 | `Api/V1/Exam/ExamController::records` |
 
-> 客户端 50 + 用户后台 50（§四，含认证 3）+ 总后台 33（§五）= **133 个接口中已开发 130 个**。剩余待开发仅 3 个：客户端搜题 API-SRC-002（依赖 AI 大模型）+ 支付 API-PAY-001~002（依赖微信支付商户号）。全部状态为「已开发」，均待联调。
+> 客户端 57 + 用户后台 50（§四，含认证 3）+ 总后台 33（§五）= **140 个接口中已开发 137 个**。剩余待开发仅 3 个：客户端搜题 API-SRC-002（依赖 AI 大模型）+ 支付 API-PAY-001~002（依赖微信支付商户号）。全部状态为「已开发」，均待联调。
 
 ### 8.1 待补齐清单（按优先级）
 

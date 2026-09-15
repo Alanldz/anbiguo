@@ -212,3 +212,51 @@ export interface PracticeRecordItem {
 export interface RecycleBankItem extends QuestionBank {
   deleted_at: string // 删除时间
 }
+
+/** 消息通知类型，对应后端 NotificationType 枚举（API-MSG-001） */
+export enum NotificationType {
+  System = 1, // 系统通知
+  Interaction = 2, // 互动通知
+  Business = 3 // 业务通知
+}
+
+/** 消息通知项（API-MSG-001 /api/v1/notifications） */
+export interface NotificationItem {
+  id: number // 通知 id
+  type: NotificationType // 通知类型
+  title: string // 标题
+  content: string // 内容
+  biz_type: string // 关联业务类型（如 bank / member / report）
+  biz_id: number // 关联业务 id
+  is_read: 0 | 1 // 是否已读：0=未读 1=已读
+  read_at: string | null // 已读时间
+  created_at: string // 创建时间
+}
+
+/** 我的斩题项（API-MST-001 /api/v1/mastered-questions） */
+export interface MasteredItem {
+  id: number // 斩题记录 id
+  question_id: number // 题目 id
+  bank_id: number // 所属题库 id
+  bank_name: string // 所属题库名称
+  question_title: string // 题干
+  question_type: QuestionType // 题型
+  question_options: QuestionOption[] // 选项
+  question_difficulty: number // 难度（1~5）
+  wrong_count: number // 累计答错次数
+  right_streak: number // 连续答对次数
+  mastered_at: string // 斩掉时间
+}
+
+/** 易错题项（API-ERR-001 /api/v1/error-prone-questions） */
+export interface ErrorProneItem {
+  id: number // 记录 id
+  bank_id: number // 所属题库 id
+  question_title: string // 题干
+  question_type: QuestionType // 题型
+  question_options: QuestionOption[] // 选项
+  question_difficulty: number // 难度（1~5）
+  correct_rate: number // 全网正确率（百分比数值，如 32.5）
+  answer_count: number // 答题人数
+  is_wrong: boolean // 当前用户是否已在错题本
+}
