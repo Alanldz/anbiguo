@@ -45,6 +45,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'request.id'     => RequestIdMiddleware::class,
             'admin.active'   => EnsureAdminActiveMiddleware::class,
             'op.log'         => OperationLogMiddleware::class,
+            'admin.ip'       => AdminIpWhitelist::class,  // 总后台 IP 白名单（config/admin.php ip_whitelist）
         ]);
 
         // API 请求走 Token 鉴权，不做 CSRF 校验

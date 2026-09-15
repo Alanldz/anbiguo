@@ -219,6 +219,8 @@ async function doSubmit() {
         .map((question) => ({ question_id: question.id, answer: answers.value[question.id] })),
       cost_seconds: costSeconds.value
     })
+    // 埋点：交卷成功
+    track('exam_submit', { biz_type: 'exam_paper', biz_id: paper.value?.id ?? 0 })
     uni.redirectTo({ url: `/pages-sub/exam/record?id=${record.id}` })
   } catch {
     // 交卷失败恢复计时，允许重试

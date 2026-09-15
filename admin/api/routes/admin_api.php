@@ -38,11 +38,12 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// API-ADM-001 登录
-Route::post('auth/login', [AuthController::class, 'login']);
+// API-ADM-001 登录（挂 IP 白名单：白名单开启时登录接口同样受控）
+Route::post('auth/login', [AuthController::class, 'login'])->middleware('admin.ip');
 
 // 以下全部需要 auth:admin 守卫（scp=admin），且登录后校验管理员状态
-Route::middleware(['auth:admin', 'admin.active'])->group(function () {
+// admin.ip 为总后台 IP 白名单（config/admin.php ip_whitelist，空数组=放行），置于鉴权之前
+Route::middleware(['admin.ip', 'auth:admin', 'admin.active'])->group(function () {
 
     // API-ADM-002 登出
     Route::post('auth/logout', [AuthController::class, 'logout']);
@@ -222,4 +223,13 @@ Route::middleware(['auth:admin', 'admin.active'])->group(function () {
     Route::get('member-plans', [MemberPlanController::class, 'index']);
     // API-ADM-105 编辑套餐
     Route::put('member-plans/{id}', [MemberPlanController::class, 'update'])->middleware('op.log:plan,update');
+
+    /*
+    |--------------------------------------------------------------------------
+    | 埋点分析（sys:statistics:view）
+    |--------------------------------------------------------------------------
+    */
+
+    // API-ADM-106 埋点分析汇总
+    Route::get('analytics/summary', [AnalyticsController::class, 'summary'])->middleware('op.log:sys,analytics');
 });

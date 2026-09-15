@@ -240,6 +240,7 @@
 | API-ADM-103 | 文件 | 文件资源管理（软删记录） | GET/DELETE | `/admin-api/v1/files` | 已实现 |
 | API-ADM-104 | 内容 | 意见反馈处理（表 sys_feedbacks） | GET/PUT | `/admin-api/v1/feedbacks` | 已实现 |
 | API-ADM-105 | 交易 | 会员套餐配置 | GET/PUT | `/admin-api/v1/member-plans` | 已实现 |
+| API-ADM-106 | 数据 | 埋点分析汇总（表 sys_event_logs） | GET | `/admin-api/v1/analytics/summary` | 已实现 |
 
 > 总后台前端工程：`admin/web/`（Vue3 + Element Plus，独立部署于 admin 域名），菜单权限码与 `SystemInitSeeder` 的 `sys_permissions.code` 一致（如 `bank:question-bank:audit`、`sys:config:view`）。
 
@@ -267,6 +268,9 @@
 | 2026-09-15 | API-CSL-AUTH-003 | 新增 | 用户后台新增「当前登录用户信息」接口 | — | 向后兼容 |
 | 2026-09-15 | API-FIL-004 | 新增 | 新增「私有文件签名下载地址」接口 | — | 向后兼容 |
 | 2026-09-15 | 1xxxx | 扩充 | 错误码由示例值扩充为完整清单（10001~10500），见 `app/Support/ErrorCode.php` | — | 向后兼容 |
+| 2026-09-16 | API-EVT-001 | 新增 | 客户端新增「埋点批量上报」接口，新增表 sys_event_logs（迁移 2026_09_15_100004） | — | 向后兼容 |
+| 2026-09-16 | API-ADM-106 | 新增 | 总后台新增「埋点分析汇总」接口（权限码 sys:statistics:view） | — | 向后兼容 |
+| 2026-09-16 | — | 运维 | 新增定时任务 user:purge-canceled（每天 03:30 物理清除注销超 30 天用户，订单依法保留）；总后台新增 IP 白名单中间件 admin.ip（config/admin.php ip_whitelist） | — | 不影响存量 |
 
 ---
 
@@ -318,7 +322,7 @@
 | API-EXM-004 | GET `/api/v1/exam-records/{id}` | 已开发 | `Api/V1/Exam/ExamController::showRecord` |
 | API-EXM-005 | GET `/api/v1/exam-records` | 已开发 | `Api/V1/Exam/ExamController::records` |
 
-> 客户端 58 + 用户后台 50（§四，含认证 3）+ 总后台 33（§五）= **141 个接口中已开发 138 个**。剩余待开发仅 3 个：客户端搜题 API-SRC-002（依赖 AI 大模型）+ 支付 API-PAY-001~002（依赖微信支付商户号）。全部状态为「已开发」，均待联调。
+> 客户端 59 + 用户后台 50（§四，含认证 3）+ 总后台 34（§五）= **143 个接口中已开发 140 个**。剩余待开发仅 3 个：客户端搜题 API-SRC-002（依赖 AI 大模型）+ 支付 API-PAY-001~002（依赖微信支付商户号）。全部状态为「已开发」，均待联调。
 
 ### 8.1 待补齐清单（按优先级）
 

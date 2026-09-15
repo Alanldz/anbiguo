@@ -97,6 +97,13 @@ class AppServiceProvider extends ServiceProvider
 
             return Limit::perMinute(6)->by('ai:'.$userId);
         });
+
+        // 埋点批量上报：60 次/分钟/用户（docs/04 §三 API-EVT-001）
+        RateLimiter::for('events-report', function (Request $request) {
+            $userId = $request->user()?->getAuthIdentifier() ?? $request->ip();
+
+            return Limit::perMinute(60)->by('events:'.$userId);
+        });
     }
 
     /** 统一密码强度规则 */

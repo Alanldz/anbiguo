@@ -380,3 +380,13 @@ export interface FeedbackSubmitParams {
   images?: number[] // 截图 file_assets id 数组（最多 9 张）
   contact?: string // 联系方式（选填，≤64 字）
 }
+
+/** 埋点事件条目（API-EVT-001 POST /api/v1/events/report，1~50 条/次） */
+export interface TrackEventItem {
+  event: string // 事件名，如 app_boot / question_answer
+  page?: string // 触发页面路由（可选）
+  biz_type?: string // 关联业务类型（如 question / exam_paper / import）
+  biz_id?: number // 关联业务 id（可选）
+  extra?: Record<string, unknown> // 扩展字段（如 { is_right: true }）
+  occurred_at?: string // 事件发生时间（本地时间 Y-m-d H:i:s）
+}

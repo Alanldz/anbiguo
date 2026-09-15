@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\Bank\BankCategoryController;
 use App\Http\Controllers\Api\V1\Bank\QuestionBankController;
 use App\Http\Controllers\Api\V1\Bank\QuestionPracticeController;
 use App\Http\Controllers\Api\V1\Common\ConfigController;
+use App\Http\Controllers\Api\V1\Common\EventController;
 use App\Http\Controllers\Api\V1\Exam\ExamController;
 use App\Http\Controllers\Api\V1\File\FileController;
 use App\Http\Controllers\Api\V1\Import\ImportController;
@@ -291,4 +292,14 @@ Route::middleware(['auth:client', 'user.active'])->prefix('search')->name('searc
 Route::middleware(['auth:client', 'user.active'])->group(function () {
     // API-FBK-001 提交意见反馈
     Route::post('feedbacks', [FeedbackController::class, 'store'])->name('feedbacks.store');
+});
+
+// =============================================================================
+// 埋点模块 · API-EVT-*（需登录，append-only 落库 sys_event_logs）
+// =============================================================================
+Route::middleware(['auth:client', 'user.active'])->group(function () {
+    // API-EVT-001 埋点批量上报（60/分钟/用户）
+    Route::post('events/report', [EventController::class, 'report'])
+        ->middleware('throttle:events-report')
+        ->name('events.report');
 });

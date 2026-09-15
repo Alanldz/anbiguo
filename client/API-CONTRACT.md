@@ -499,3 +499,41 @@ MemberLevel：0 普通 / 1 月卡 / 2 季卡 / 3 年卡 / 4 永久
 ```
 - 处理流程由总后台 API-ADM-104（`/admin-api/v1/feedbacks`）负责，客户端不提供查看接口
 - 客户端落地：`client/src/api/feedback.ts` + `client/src/pages-sub/feedback/create.vue`（我的页「意见反馈」入口）
+
+---
+
+## 十四、埋点接口（API-EVT-001）
+
+> 数据库变更：新增表 `sys_event_logs`（迁移 `2026_09_15_100004`，append-only 不软删）。
+> 客户端仅登录后上报；服务端记录 `client_platform`（取请求头 `X-Client-Platform`，取值 mp-weixin / app-android / h5）。
+
+### API-EVT-001 `POST /events/report`（需登录，auth:client + user.active，60/分钟）
+- 请求参数：
+```jsonc
+{
+  "events": [
+    {
+      "event": "page_view",        // 必填，事件名，≤64 字（字母/数字/下划线/连字符）
+      "page": "/pages/study/index", // 可选，页面路径，≤128 字
+      "biz_type": "exam",           // 可选，业务标识，≤32 字
+      "biz_id": 3001,               // 可选，关联业务 ID，非负整数，默认 0
+      "extra": { "paper_id": 12 },  // 可选，扩展对象，序列化后 ≤800 字
+      "occurred_at": "2026-09-16 10:00:00" // 可选，客户端事件时间，格式 Y-m-d H:i:s；缺省取服务器时间
+    }
+  ]
+}
+```
+- 校验：`events` 必填且为 1~50 条的数组，任一条不合法抛 `PARAM_INVALID`（10007）
+- 落库：`sys_event_logs`（user_id=当前用户、client_platform 取请求头 `X-Client-Platform`，与 `PlatformHeaderMiddleware` 一致）；批量写入不做事务包裹
+- resp：
+```jsonc
+{ "accepted": 3 }   // 实际插入条数
+```
+- 事件名枚举（本期约定，客户端按需上报）：
+  - `app_boot`：应用启动
+  - `page_view`：页面浏览（page 为页面路径）
+  - `question_answer`：作答题目（biz_type=question，biz_id=题目 ID）
+  - `exam_submit`：交卷（biz_type=exam，biz_id=考试记录 ID）
+  - `import_create`：发起导题（biz_type=import，biz_id=任务 ID）
+  - 未列入的事件名只要满足字符与长度约束即可上报，服务端不校验白名单
+- 总后台分析出口：API-ADM-106 `GET /admin-api/v1/analytics/summary`（服务端内部，客户端不感知）

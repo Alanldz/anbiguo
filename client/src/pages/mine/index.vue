@@ -100,7 +100,7 @@ const moreEntries: GridMenuItem[] = [
   { key: 'coupon', label: '优惠券', iconText: '券', path: '' },
   { key: 'report', label: '试题报错', iconText: '报', path: '' },
   { key: 'feedback', label: '意见反馈', iconText: '馈', path: '/pages-sub/feedback/create' },
-  { key: 'help', label: '帮助中心', iconText: '助', path: '' },
+  { key: 'help', label: '帮助中心', iconText: '助', path: '/pages-sub/help/index' },
   { key: 'web', label: '电脑网页版', iconText: '网', path: '' },
   { key: 'redeem', label: '兑换码', iconText: '兑', path: '' },
   { key: 'trash', label: '回收站', iconText: '收', path: '/pages-sub/bank/recycle' },

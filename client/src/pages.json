@@ -83,7 +83,8 @@
         { "path": "notification/list", "style": { "navigationBarTitleText": "消息中心" } },
         { "path": "master/list", "style": { "navigationBarTitleText": "我的斩题" } },
         { "path": "agreement/index", "style": { "navigationBarTitleText": "协议详情" } },
-        { "path": "feedback/create", "style": { "navigationBarTitleText": "意见反馈" } }
+        { "path": "feedback/create", "style": { "navigationBarTitleText": "意见反馈" } },
+        { "path": "help/index", "style": { "navigationBarTitleText": "帮助中心" } }
       ]
     }
   ],

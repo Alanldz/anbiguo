@@ -142,17 +142,48 @@ function handleEntry(item: { key?: string; label: string; path?: string }) {
   uni.showToast({ title: '该功能规划中，敬请期待', icon: 'none' })
 }
 
-/** 右上角「⋯」：重命名（API-BANK-005）/ 删除（API-BANK-006）；分享与导出暂无客户端接口 */
+/** 右上角「⋯」：重命名（API-BANK-005）/ 删除（API-BANK-006）/ 分享（复制链接）/ 导出（H5 下载 JSON） */
 function handleMore() {
   uni.showActionSheet({
     itemList: ['重命名题库', '分享题库', '导出题库', '删除题库'],
     success: ({ tapIndex }) => {
       if (tapIndex === 0) handleRename()
-      else if (tapIndex === 1) uni.showToast({ title: '分享功能待上线', icon: 'none' })
-      else if (tapIndex === 2) uni.showToast({ title: '导出功能待上线', icon: 'none' })
+      else if (tapIndex === 1) handleShare()
+      else if (tapIndex === 2) handleExport()
       else handleDelete()
     }
   })
+}
+
+/** 分享题库：复制题库详情页链接（H5 hash 路由拼法），不接微信 SDK */
+function handleShare() {
+  // #ifdef H5
+  const link = `${location.origin}${location.pathname}#/pages-sub/bank/detail?id=${bankId.value}`
+  // #endif
+  // #ifndef H5
+  // 非 H5 端拼网页端地址（hash 路由拼法与 H5 一致）
+  const link = `https://www.anbiguo.com/#/pages-sub/bank/detail?id=${bankId.value}`
+  // #endif
+  uni.setClipboardData({
+    data: link,
+    success: () => uni.showToast({ title: '链接已复制，快去分享给好友吧', icon: 'none' })
+  })
+}
+
+/** 导出题库：H5 下载 JSON 文件，非 H5 端由工具层 toast 提示 */
+async function handleExport() {
+  if (exporting.value) return
+  exporting.value = true
+  uni.showLoading({ title: '导出中', mask: true })
+  try {
+    const downloaded = await exportBankAsJson(bankId.value)
+    if (downloaded) uni.showToast({ title: '导出成功', icon: 'none' })
+  } catch {
+    uni.showToast({ title: '导出失败，请稍后重试', icon: 'none' })
+  } finally {
+    uni.hideLoading()
+    exporting.value = false
+  }
 }
 
 /** API-BANK-005 更新题库名：弹输入框 → 调接口 → 刷新 store 与页面标题 */

@@ -152,6 +152,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import { createQuestionManual } from '@/api/importer'
 import { useBankStore } from '@/stores/bank'
 import { QuestionType, type QuestionBank, type QuestionOption } from '@/types'
+import { track } from '@/utils/track'
 
 const TYPE_ITEMS: Array<{ value: QuestionType; label: string }> = [
   { value: QuestionType.Single, label: '单选' },
@@ -289,6 +290,8 @@ async function handleSubmit() {
       score: Number(scoreText.value) || 1
     })
     uni.showToast({ title: '已提交，可在解析任务中校对', icon: 'none' })
+    // 埋点：手动录题提交成功
+    track('import_create', { biz_type: 'import' })
     // 成功后清空表单，保留题型与题库便于继续录入
     title.value = ''
     analysis.value = ''

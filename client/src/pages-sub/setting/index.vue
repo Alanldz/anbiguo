@@ -86,6 +86,11 @@ function handleAgreement(name: string) {
   uni.showToast({ title: `${name} 待上线`, icon: 'none' })
 }
 
+/** 帮助中心（pages-sub/help/index，静态 FAQ） */
+function goHelp() {
+  uni.navigateTo({ url: '/pages-sub/help/index' })
+}
+
 function handleLogout() {
   uni.showModal({
     title: '退出登录',

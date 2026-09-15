@@ -94,6 +94,7 @@ import { computed, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { fetchQuestions, saveNote, submitAnswer, toggleFavorite } from '@/api/question'
 import type { AnswerSheetItem } from '@/components/answer-sheet/answer-sheet.vue'
+import { track } from '@/utils/track'
 import type { Question } from '@/types'
 
 const MODE_LABEL: Record<string, string> = {
@@ -167,6 +168,12 @@ async function handleSubmit() {
   })
   correctMap.value[currentQuestion.value.id] = result.correct
   showResult.value = true
+  // 埋点：单题作答成功（含对错结果）
+  track('question_answer', {
+    biz_type: 'question',
+    biz_id: currentQuestion.value.id,
+    extra: { is_right: result.correct }
+  })
 }
 
 function goPrev() {

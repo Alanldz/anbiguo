@@ -31,3 +31,6 @@ Schedule::command('file:clean-deleted')->dailyAt('03:30');
 
 // 冗余计数校准：每天 04:00 校准题库题目数、分类题库数等
 Schedule::command('data:recount')->dailyAt('04:00');
+
+// 注销用户物理清除：每天 03:30 清除已注销超 30 天的用户数据（订单依法保留）
+Schedule::command('user:purge-canceled')->dailyAt('03:30');
