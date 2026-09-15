@@ -28,6 +28,7 @@
         <template #default="{ row }">
           <template v-if="!row._editing">
             <el-button link type="primary" :icon="Edit" @click="startEdit(row)">编辑</el-button>
+            <el-button link type="warning" :icon="Connection" :loading="row._testing" @click="handleTest(row)">测试连通</el-button>
           </template>
           <template v-else>
             <el-button link type="success" @click="handleSave(row)">保存</el-button>
@@ -42,8 +43,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Edit } from '@element-plus/icons-vue'
-import { fetchConfigList, updateConfig } from '@/api/config'
+import { Edit, Connection } from '@element-plus/icons-vue'
+import { fetchConfigList, updateConfig, testConfig } from '@/api/config'
 import type { ConfigItem, ConfigGroup } from '@/types/api.d'
 
 const loading = ref(false)
@@ -51,7 +52,7 @@ const groups = ref<ConfigGroup[]>([])
 const activeGroup = ref('')
 const list = ref<ConfigItem[]>([])
 
-type EditableConfig = ConfigItem & { _editing?: boolean; _draft?: string }
+type EditableConfig = ConfigItem & { _editing?: boolean; _draft?: string; _testing?: boolean }
 
 async function loadData() {
   if (!activeGroup.value) return
@@ -89,6 +90,22 @@ async function handleSave(row: EditableConfig) {
     ElMessage.success('保存成功')
   } catch {
     // 错误已统一提示
+  }
+}
+
+/** API-ADM-101 配置连通性测试 */
+async function handleTest(row: EditableConfig) {
+  row._testing = true
+  try {
+    const res = await testConfig(row.id)
+    ElMessage({
+      type: res.ok ? 'success' : 'error',
+      message: `${res.message}（耗时 ${res.latency_ms}ms）`,
+    })
+  } catch {
+    // 错误已统一提示
+  } finally {
+    row._testing = false
   }
 }
 

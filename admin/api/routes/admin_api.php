@@ -17,7 +17,12 @@ use App\Http\Controllers\Admin\V1\AdminController;
 use App\Http\Controllers\Admin\V1\AuthController;
 use App\Http\Controllers\Admin\V1\BankController;
 use App\Http\Controllers\Admin\V1\BannerController;
+use App\Http\Controllers\Admin\V1\CategoryController;
 use App\Http\Controllers\Admin\V1\ConfigController;
+use App\Http\Controllers\Admin\V1\FeedbackController;
+use App\Http\Controllers\Admin\V1\FileController;
+use App\Http\Controllers\Admin\V1\MemberPlanController;
+use App\Http\Controllers\Admin\V1\OrderController;
 use App\Http\Controllers\Admin\V1\DashboardController;
 use App\Http\Controllers\Admin\V1\ImportTaskController;
 use App\Http\Controllers\Admin\V1\LoginLogController;
@@ -149,4 +154,72 @@ Route::middleware(['auth:admin', 'admin.active'])->group(function () {
 
     // API-ADM-090 导题任务监控
     Route::get('import-tasks', [ImportTaskController::class, 'index']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | 分类管理（bank_categories / file_categories 系统预置）
+    |--------------------------------------------------------------------------
+    */
+
+    // API-ADM-100 分类列表（?type=bank|file）
+    Route::get('categories', [CategoryController::class, 'index']);
+    // API-ADM-100 新建分类
+    Route::post('categories', [CategoryController::class, 'store'])->middleware('op.log:category,create');
+    // API-ADM-100 编辑分类（?type=bank|file）
+    Route::put('categories/{id}', [CategoryController::class, 'update'])->middleware('op.log:category,update');
+    // API-ADM-100 删除分类（?type=bank|file）
+    Route::delete('categories/{id}', [CategoryController::class, 'destroy'])->middleware('op.log:category,delete');
+
+    /*
+    |--------------------------------------------------------------------------
+    | 配置连通测试
+    |--------------------------------------------------------------------------
+    */
+
+    // API-ADM-101 测试配置连通性（sys:config:test）
+    Route::post('configs/{id}/test', [ConfigController::class, 'test'])->middleware('op.log:config,test');
+
+    /*
+    |--------------------------------------------------------------------------
+    | 订单管理 / 退款
+    |--------------------------------------------------------------------------
+    */
+
+    // API-ADM-102 订单列表
+    Route::get('orders', [OrderController::class, 'index']);
+    // API-ADM-102 订单退款（仅已支付，资金原路退回待微信支付接入）
+    Route::post('orders/{id}/refund', [OrderController::class, 'refund'])->middleware('op.log:order,refund');
+
+    /*
+    |--------------------------------------------------------------------------
+    | 文件资源管理
+    |--------------------------------------------------------------------------
+    */
+
+    // API-ADM-103 文件列表
+    Route::get('files', [FileController::class, 'index']);
+    // API-ADM-103 删除文件（仅软删记录，不调 OSS）
+    Route::delete('files/{id}', [FileController::class, 'destroy'])->middleware('op.log:file,delete');
+
+    /*
+    |--------------------------------------------------------------------------
+    | 意见反馈处理
+    |--------------------------------------------------------------------------
+    */
+
+    // API-ADM-104 反馈列表
+    Route::get('feedbacks', [FeedbackController::class, 'index']);
+    // API-ADM-104 处理反馈
+    Route::put('feedbacks/{id}/handle', [FeedbackController::class, 'handle'])->middleware('op.log:feedback,handle');
+
+    /*
+    |--------------------------------------------------------------------------
+    | 会员套餐配置
+    |--------------------------------------------------------------------------
+    */
+
+    // API-ADM-105 套餐全量列表
+    Route::get('member-plans', [MemberPlanController::class, 'index']);
+    // API-ADM-105 编辑套餐
+    Route::put('member-plans/{id}', [MemberPlanController::class, 'update'])->middleware('op.log:plan,update');
 });

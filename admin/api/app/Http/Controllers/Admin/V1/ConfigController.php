@@ -44,4 +44,12 @@ class ConfigController extends Controller
 
         return ApiResponse::success($result, '保存成功');
     }
+
+    /** API-ADM-101 测试配置连通性（sys:config:test） */
+    public function test(int $id): JsonResponse
+    {
+        $result = $this->configService->test($id);
+
+        return ApiResponse::success($result, $result['ok'] ? '连通性正常' : '连通性探测未通过');
+    }
 }

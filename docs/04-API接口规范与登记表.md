@@ -220,12 +220,12 @@
 | API-ADM-082 | 运营 | 编辑轮播 | PUT | `/admin-api/v1/banners/{id}` | 已实现 |
 | API-ADM-083 | 运营 | 删除轮播 | DELETE | `/admin-api/v1/banners/{id}` | 已实现 |
 | API-ADM-090 | 运营 | AI 导题任务监控 | GET | `/admin-api/v1/import-tasks` | 已实现 |
-| API-ADM-100 | 分类 | 分类管理 | GET/POST/PUT/DELETE | `/admin-api/v1/categories` | 待开发 |
-| API-ADM-101 | 配置 | 测试配置连通性 | POST | `/admin-api/v1/configs/{id}/test` | 待开发 |
-| API-ADM-102 | 订单 | 订单管理/退款 | GET/POST | `/admin-api/v1/orders` | 待开发 |
-| API-ADM-103 | 文件 | 文件资源管理 | GET/DELETE | `/admin-api/v1/files` | 待开发 |
-| API-ADM-104 | 内容 | 意见反馈处理 | GET/PUT | `/admin-api/v1/feedbacks` | 待开发 |
-| API-ADM-105 | 交易 | 会员套餐配置 | GET/PUT | `/admin-api/v1/member-plans` | 待开发 |
+| API-ADM-100 | 分类 | 分类管理（题库/资料双 type） | GET/POST/PUT/DELETE | `/admin-api/v1/categories` | 已实现 |
+| API-ADM-101 | 配置 | 测试配置连通性 | POST | `/admin-api/v1/configs/{id}/test` | 已实现 |
+| API-ADM-102 | 订单 | 订单管理/退款（资金退回待微信支付接入） | GET/POST | `/admin-api/v1/orders` | 已实现 |
+| API-ADM-103 | 文件 | 文件资源管理（软删记录） | GET/DELETE | `/admin-api/v1/files` | 已实现 |
+| API-ADM-104 | 内容 | 意见反馈处理（表 sys_feedbacks） | GET/PUT | `/admin-api/v1/feedbacks` | 已实现 |
+| API-ADM-105 | 交易 | 会员套餐配置 | GET/PUT | `/admin-api/v1/member-plans` | 已实现 |
 
 > 总后台前端工程：`admin/web/`（Vue3 + Element Plus，独立部署于 admin 域名），菜单权限码与 `SystemInitSeeder` 的 `sys_permissions.code` 一致（如 `bank:question-bank:audit`、`sys:config:view`）。
 
@@ -304,16 +304,16 @@
 | API-EXM-004 | GET `/api/v1/exam-records/{id}` | 已开发 | `Api/V1/Exam/ExamController::showRecord` |
 | API-EXM-005 | GET `/api/v1/exam-records` | 已开发 | `Api/V1/Exam/ExamController::records` |
 
-> 客户端 44 + 用户后台 50（§四，含认证 3）+ 总后台 27（§五）= **121 个接口中已开发 112 个**。剩余待开发：客户端搜索 1 个（API-SRC-002，依赖 AI）+ 支付 2 个（API-PAY-001~002，依赖微信支付）+ 总后台 6 个（API-ADM-100~105）。全部状态为「已开发」，均待联调。
+> 客户端 44 + 用户后台 50（§四，含认证 3）+ 总后台 33（§五）= **127 个接口中已开发 124 个**。剩余待开发仅 3 个：客户端搜题 API-SRC-002（依赖 AI 大模型）+ 支付 API-PAY-001~002（依赖微信支付商户号）。全部状态为「已开发」，均待联调。
 
 ### 8.1 待补齐清单（按优先级）
 
 | 优先级 | 模块 | 接口 |
 | --- | --- | --- |
 | ~~P0~~ | ~~导入 / 练习 / 考试 / 错题 / 用户~~ | ~~API-IMP/QUE/WRG/EXM/USER~~ 已于 2026-09-15 全部落地（导入与 OCR 为占位，待 AI 接入后升级） |
+| ~~P2~~ | ~~总后台全部~~ | ~~API-ADM-001~105~~ 已于 2026-09-15 全部落地（ADM-102 退款仅记录状态，资金退回待微信支付接入） |
 | P1 | 搜索 | API-SRC-001（已开发，不依赖 AI）、API-SRC-002（待开发，依赖 AI 大模型） |
 | P1 | 支付 | API-PAY-001~002（待开发，依赖微信支付商户号） |
-| P2 | 总后台其余 | API-ADM-100~105（独立应用 `admin/api/`） |
 
 ### 8.2 尚未实现的服务端能力
 

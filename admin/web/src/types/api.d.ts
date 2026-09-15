@@ -243,3 +243,180 @@ export interface ListQuery {
   keyword?: string
   status?: number
 }
+
+/** 用户简要信息（订单/反馈中内嵌） */
+export interface UserBrief {
+  id: number
+  nickname: string
+  phone: string
+}
+
+/* ===================== ADM-100 分类管理 ===================== */
+export interface CategoryItem {
+  id: number
+  parent_id: number
+  name: string
+  code: string
+  icon: string
+  level: number
+  count: number
+  sort_order: number
+  status: number
+  created_at: string
+}
+
+/** 新建分类（type 区分 bank/file，code 后端生成唯一） */
+export interface CategoryPayload {
+  type: 'bank' | 'file'
+  parent_id: number
+  name: string
+  code: string
+  icon: string
+  sort_order: number
+  status: number
+}
+
+/** 编辑分类（code 不可编辑） */
+export interface CategoryUpdatePayload {
+  name: string
+  icon: string
+  sort_order: number
+  status: number
+}
+
+/** 前端组树后的节点 */
+export interface CategoryTreeItem extends CategoryItem {
+  children: CategoryTreeItem[]
+}
+
+/* ===================== ADM-101 配置连通性测试 ===================== */
+export interface ConfigTestResult {
+  ok: boolean
+  message: string
+  latency_ms: number
+}
+
+/* ===================== ADM-102 订单管理 ===================== */
+export interface OrderItem {
+  id: number
+  order_no: string
+  user: UserBrief
+  order_type: number
+  biz_id: number
+  biz_title: string
+  origin_amount: number
+  discount_amount: number
+  pay_amount: number
+  pay_channel: number
+  status: number
+  client_platform: string
+  remark: string
+  created_at: string
+  paid_at: string
+}
+
+/** 订单列表返回（与全局分页约定一致：pagination 包裹） */
+export type OrderListData = PaginatedData<OrderItem>
+
+export interface OrderQuery {
+  page?: number
+  page_size?: number
+  order_no?: string
+  keyword?: string
+  order_type?: number
+  status?: number
+}
+
+export interface OrderRefundPayload {
+  reason: string
+}
+
+/* ===================== ADM-103 文件资源管理 ===================== */
+export interface FileAssetItem {
+  id: number
+  user_id: number
+  biz_type: number
+  bank_id: number
+  category_id: number
+  origin_name: string
+  object_key: string
+  file_ext: string
+  file_size: number
+  mime_type: string
+  storage: string
+  is_public: number
+  created_at: string
+}
+
+export type FileListData = PaginatedData<FileAssetItem>
+
+export interface FileQuery {
+  page?: number
+  page_size?: number
+  keyword?: string
+  biz_type?: number
+  user_id?: number
+  storage?: string
+}
+
+/* ===================== ADM-104 意见反馈 ===================== */
+export interface FeedbackItem {
+  id: number
+  user: UserBrief
+  type: number
+  content: string
+  images: string[]
+  contact: string
+  status: number
+  reply: string
+  handler_id: number
+  handled_at: string
+  created_at: string
+}
+
+export type FeedbackListData = PaginatedData<FeedbackItem>
+
+export interface FeedbackQuery {
+  page?: number
+  page_size?: number
+  status?: number
+  type?: number
+  keyword?: string
+}
+
+export interface FeedbackHandlePayload {
+  status: 1 | 2
+  reply: string
+}
+
+/* ===================== ADM-105 会员套餐 ===================== */
+export interface MemberPlanItem {
+  id: number
+  name: string
+  level: number
+  duration_days: number
+  price_amount: number
+  origin_amount: number
+  description: string
+  benefits: string[]
+  ai_import_quota: number
+  is_recommend: number
+  sort_order: number
+  status: number
+  created_at: string
+}
+
+/** 编辑会员套餐（任意子集） */
+export type MemberPlanUpdatePayload = Partial<{
+  name: string
+  level: number
+  duration_days: number
+  price_amount: number
+  origin_amount: number
+  description: string
+  benefits: string[]
+  ai_import_quota: number
+  is_recommend: number
+  sort_order: number
+  status: number
+}>

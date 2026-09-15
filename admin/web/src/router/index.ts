@@ -58,6 +58,30 @@ export const routes: RouteRecordRaw[] = [
         meta: { title: '导入任务', icon: 'Upload', group: '内容管理', permission: 'bank:question-bank:list' },
       },
       {
+        path: 'bank/categories',
+        name: 'BankCategory',
+        component: () => import('@/views/bank/categories/index.vue'),
+        meta: { title: '分类管理', icon: 'Collection', group: '题库管理', permission: 'bank:category:list' },
+      },
+      {
+        path: 'order/orders',
+        name: 'OrderList',
+        component: () => import('@/views/order/orders/index.vue'),
+        meta: { title: '订单管理', icon: 'Tickets', group: '交易管理', permission: 'order:order:list' },
+      },
+      {
+        path: 'file/files',
+        name: 'FileAsset',
+        component: () => import('@/views/file/files/index.vue'),
+        meta: { title: '文件资源', icon: 'Folder', group: '内容管理', permission: 'file:asset:list' },
+      },
+      {
+        path: 'content/feedbacks',
+        name: 'FeedbackList',
+        component: () => import('@/views/content/feedbacks/index.vue'),
+        meta: { title: '意见反馈', icon: 'ChatDotRound', group: '内容管理', permission: 'content:feedback:list' },
+      },
+      {
         path: 'user/users',
         name: 'UserList',
         component: () => import('@/views/user/users/index.vue'),

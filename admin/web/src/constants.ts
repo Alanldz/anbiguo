@@ -83,3 +83,80 @@ export const MEMBER_LEVEL_MAP: Record<number, string> = {
   2: '年度会员',
   3: '终身会员',
 }
+
+/* ===================== P2 业务枚举映射 ===================== */
+
+/** 分类状态：1正常 / 2隐藏 */
+export const CATEGORY_STATUS_MAP: Record<number, { label: string; type: '' | 'success' | 'info' }> = {
+  1: { label: '正常', type: 'success' },
+  2: { label: '隐藏', type: 'info' },
+}
+export const CATEGORY_STATUS_NORMAL = 1
+export const CATEGORY_STATUS_HIDDEN = 2
+
+/** 订单类型：1会员 / 2题库购买 / 3资料购买 */
+export const ORDER_TYPE_MAP: Record<number, string> = {
+  1: '会员',
+  2: '题库购买',
+  3: '资料购买',
+}
+
+/** 订单状态：0待支付 / 1已支付 / 2已取消 / 3已退款 / 4已关闭 */
+export const ORDER_STATUS_MAP: Record<number, { label: string; type: '' | 'success' | 'info' | 'warning' | 'danger' }> = {
+  0: { label: '待支付', type: 'warning' },
+  1: { label: '已支付', type: 'success' },
+  2: { label: '已取消', type: 'info' },
+  3: { label: '已退款', type: 'warning' },
+  4: { label: '已关闭', type: 'info' },
+}
+/** 订单可退款状态（已支付） */
+export const ORDER_STATUS_PAID = 1
+
+/** 支付渠道：1微信支付 / 2支付宝 */
+export const PAY_CHANNEL_MAP: Record<number, string> = {
+  1: '微信支付',
+  2: '支付宝',
+}
+
+/** 文件业务类型：1题库源文件 / 2题目图片 / 3学习资料 / 4课程音视频 / 5头像 / 6公开静态 / 9临时文件 */
+export const BIZ_TYPE_MAP: Record<number, string> = {
+  1: '题库源文件',
+  2: '题目图片',
+  3: '学习资料',
+  4: '课程音视频',
+  5: '头像',
+  6: '公开静态',
+  9: '临时文件',
+}
+
+/** 反馈类型：1功能异常 / 2体验建议 / 3其他 */
+export const FEEDBACK_TYPE_MAP: Record<number, string> = {
+  1: '功能异常',
+  2: '体验建议',
+  3: '其他',
+}
+
+/** 反馈状态：0待处理 / 1已处理 / 2已忽略 */
+export const FEEDBACK_STATUS_MAP: Record<number, { label: string; type: '' | 'success' | 'info' | 'warning' }> = {
+  0: { label: '待处理', type: 'warning' },
+  1: { label: '已处理', type: 'success' },
+  2: { label: '已忽略', type: 'info' },
+}
+/** 反馈处理结果 */
+export const FEEDBACK_STATUS_HANDLED = 1
+export const FEEDBACK_STATUS_IGNORED = 2
+
+/** 会员套餐等级：1月卡 / 2季卡 / 3年卡 / 4永久 */
+export const PLAN_LEVEL_MAP: Record<number, string> = {
+  1: '月卡',
+  2: '季卡',
+  3: '年卡',
+  4: '永久',
+}
+/** 会员套餐状态：1上架 / 2下架 */
+export const PLAN_STATUS_MAP: Record<number, { label: string; type: '' | 'success' | 'info' }> = {
+  1: { label: '上架', type: 'success' },
+  2: { label: '下架', type: 'info' },
+}
+export const PLAN_STATUS_ONLINE = 1
+export const PLAN_STATUS_OFFLINE = 2
