@@ -3,6 +3,18 @@
 > 记录粒度：文档规范层面的变更。代码变更走 Git 提交记录。
 > 格式：`日期 · 变更人 · 变更内容 · 影响范围`
 
+## 2026-09-15 · 第五次变更
+
+**变更人**：WorkBuddy（待补充实际负责人）
+
+**变更内容**
+
+1. **品牌定名「识途」**：口号「用识途，备考路上不走弯路」。全项目 12 处用户可见文案由「刷题平台/安必果刷题/安比果」统一替换为「识途刷题」，覆盖 client（manifest/pages.json/login/mine/题库详情）、server（.env.example/config/seeder/ConfigController/composer.json）与 README。**内部标识暂未改**：目录名 `anbiguo`、包名 `anbiguo-client`、`anbiguo/server`、域名占位 `api.anbiguo.com`——待正式域名确定后统一处理。
+2. **新增 `docs/08-服务器部署指南(宝塔).md`**：宝塔环境清单（Nginx/MySQL8/PHP8.3+扩展+禁用函数/Redis/Supervisor）、域名与四站点规划、代码部署五步、建库与三账号隔离验证、Nginx 配置、队列与计划任务、七类第三方服务开通清单（七牛/腾讯云短信/小程序/微信支付/AI 大模型/OCR/SSL）与 sys_configs 配置键对照、安全加固清单、当前代码缺口与执行顺序。
+3. **GitHub 仓库建立**：`git@github.com:Alanldz/anbiguo.git`（Private），main 已推送；根 `.gitignore` 与根 `README.md` 新增。
+
+**影响范围**：全部端文案展示、部署运维流程、代码仓库。
+
 ## 2026-09-15 · 第四次变更
 
 **变更人**：WorkBuddy（待补充实际负责人）

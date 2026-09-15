@@ -203,7 +203,7 @@ class SystemInitSeeder extends Seeder
             ['ocr', 'ocr.app_id',   '',  1, 0, 'AppID',     'OCR 应用 ID', 20],
             ['ocr', 'ocr.secret',   '',  1, 1, 'Secret',    'OCR 应用密钥', 30],
             // 站点
-            ['site', 'site.name',              '安必果刷题', 1, 0, '站点名称',     '客户端显示名称', 10],
+            ['site', 'site.name',              '识途刷题', 1, 0, '站点名称',     '客户端显示名称', 10],
             ['site', 'site.logo',              '',          1, 0, '站点 Logo',    '图片地址', 20],
             ['site', 'site.icp_no',            '',          1, 0, 'ICP 备案号',   '页面底部展示', 30],
             ['site', 'site.customer_service',  '',          1, 0, '客服微信',     '展示在「我的」页', 40],

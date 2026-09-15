@@ -30,7 +30,7 @@ class ConfigController extends Controller
     {
         return ApiResponse::success([
             'site' => [
-                'name'              => (string) $this->config->get('site.name', '安必果刷题'),
+                'name'              => (string) $this->config->get('site.name', '识途刷题'),
                 'logo'              => (string) $this->config->get('site.logo', ''),
                 'icp_no'            => (string) $this->config->get('site.icp_no', ''),
                 'customer_service'  => (string) $this->config->get('site.customer_service', ''),

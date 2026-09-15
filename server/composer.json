@@ -1,7 +1,7 @@
 {
     "name": "anbiguo/server",
     "type": "project",
-    "description": "安必果刷题 · 客户端与用户后台后端服务（Laravel 11 + MySQL 8.0）",
+    "description": "识途刷题 · 客户端与用户后台后端服务（Laravel 11 + MySQL 8.0）",
     "keywords": ["laravel", "anbiguo", "question-bank"],
     "license": "proprietary",
     "require": {

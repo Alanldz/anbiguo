@@ -1,4 +1,4 @@
-# 安必果刷题 · 后端服务（server/）
+# 识途刷题 · 后端服务（server/）
 
 > PHP 8.3 + Laravel 11 + MySQL 8.0 + Redis 7，前后端严格分离。
 > 本应用同时承载**客户端接口**（`/api/v1`）与**用户后台接口**（`/console-api/v1`）。

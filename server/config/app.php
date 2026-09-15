@@ -2,7 +2,7 @@
 
 return [
 
-    'name' => env('APP_NAME', '安必果刷题'),
+    'name' => env('APP_NAME', '识途刷题'),
 
     'env' => env('APP_ENV', 'production'),
 
