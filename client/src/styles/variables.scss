@@ -1,0 +1,70 @@
+// ============================================================
+// 设计变量（Design Tokens）
+// 规则：所有颜色/字号/间距/圆角/阴影都必须引用此处变量，
+//       页面样式里禁止出现魔法值（如 #2b7cff、13px 直接硬编码）。
+// 变更本文件前请同步 docs/01-技术架构与选型.md「多端兼容策略」
+// ============================================================
+
+// ---------- 品牌色 ----------
+$color-primary: #2b7cff; // 主色（品牌蓝）
+$color-primary-light: #5c9bff;
+$color-primary-dark: #1a63d9;
+$color-primary-bg: #eaf2ff; // 主色浅底
+$color-primary-gradient: linear-gradient(135deg, #3d86ff 0%, #1f6bff 100%);
+
+// ---------- 功能色 ----------
+$color-success: #22c55e;
+$color-success-bg: #e8f8ee;
+$color-warning: #f59e0b;
+$color-warning-bg: #fff5e6;
+$color-danger: #ef4444;
+$color-danger-bg: #fdecec;
+$color-vip: #f7b500; // 会员金
+$color-vip-bg: #fff8e6;
+
+// ---------- 文字 ----------
+$color-text-primary: #1a1a1a;
+$color-text-regular: #4b5563;
+$color-text-secondary: #8a94a6;
+$color-text-placeholder: #b6bfcc;
+$color-text-inverse: #ffffff;
+
+// ---------- 背景与边框 ----------
+$color-bg-page: #f5f7fa;
+$color-bg-card: #ffffff;
+$color-bg-mask: rgba(0, 0, 0, 0.5);
+$color-border: #ebedf0;
+$color-divider: #f2f4f7;
+
+// ---------- 字号 ----------
+$font-size-xs: 20rpx;
+$font-size-sm: 24rpx;
+$font-size-base: 28rpx;
+$font-size-md: 30rpx;
+$font-size-lg: 34rpx;
+$font-size-xl: 40rpx;
+$font-size-xxl: 48rpx;
+
+// ---------- 间距 ----------
+$spacing-xs: 8rpx;
+$spacing-sm: 16rpx;
+$spacing-md: 24rpx;
+$spacing-lg: 32rpx;
+$spacing-xl: 48rpx;
+
+// ---------- 圆角 ----------
+$radius-sm: 8rpx;
+$radius-md: 16rpx;
+$radius-lg: 24rpx;
+$radius-xl: 32rpx;
+$radius-circle: 50%;
+
+// ---------- 阴影 ----------
+$shadow-sm: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+$shadow-md: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 8rpx 32rpx rgba(43, 124, 255, 0.12);
+
+// ---------- 尺寸 ----------
+$header-height: 88rpx; // 自定义导航栏高度
+$tabbar-height: 100rpx;
+$avatar-size: 96rpx;

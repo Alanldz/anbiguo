@@ -1,0 +1,34 @@
+# 识途刷题 · Git 忽略规则
+# 原则：仓库只进源码与文档，不进依赖、构建产物、密钥、本机数据
+
+# ---- 依赖 ----
+node_modules/
+client/node_modules/
+server/vendor/
+
+# ---- 构建产物 ----
+dist/
+unpackage/
+client/dist/
+client/unpackage/
+
+# ---- 环境与密钥（严禁入库）----
+.env
+.env.*
+server/.env
+server/.env.*
+!.env.example
+
+# ---- 运行时数据 ----
+server/storage/
+*.log
+logs/
+
+# ---- WorkBuddy 本机工作数据 ----
+.workbuddy/
+
+# ---- IDE 与系统文件 ----
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

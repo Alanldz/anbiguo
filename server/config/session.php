@@ -1,0 +1,44 @@
+<?php
+
+use Illuminate\Support\Str;
+
+return [
+
+    'driver' => env('SESSION_DRIVER', 'redis'),
+
+    'lifetime' => (int) env('SESSION_LIFETIME', 120),
+
+    'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
+
+    'encrypt' => env('SESSION_ENCRYPT', false),
+
+    'files' => storage_path('framework/sessions'),
+
+    'connection' => env('SESSION_CONNECTION'),
+
+    'table' => env('SESSION_TABLE', 'sessions'),
+
+    'store' => env('SESSION_STORE'),
+
+    'lottery' => [2, 100],
+
+    'cookie' => env(
+        'SESSION_COOKIE',
+        Str::slug(env('APP_NAME', 'anbiguo'), '_').'_session'
+    ),
+
+    'path' => env('SESSION_PATH', '/'),
+
+    'domain' => env('SESSION_DOMAIN'),
+
+    // API 站点强制 HTTPS
+    'secure' => env('SESSION_SECURE_COOKIE', true),
+
+    'http_only' => env('SESSION_HTTP_ONLY', true),
+
+    // 本应用为纯 API 服务，无页面跳转需求，保留 lax 即可
+    'same_site' => env('SESSION_SAME_SITE', 'lax'),
+
+    'partitioned' => env('SESSION_PARTITIONED_COOKIE', false),
+
+];

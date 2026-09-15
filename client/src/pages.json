@@ -1,0 +1,134 @@
+{
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^base-(.*)": "@/components/base-$1/base-$1.vue",
+      "^(bank|grid|nav|answer|question|list|upload)-(.*)": "@/components/$1-$2/$1-$2.vue"
+    }
+  },
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "首页",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/bank/list",
+      "style": {
+        "navigationBarTitleText": "题库",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/ai/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "AI 导题"
+      }
+    },
+    {
+      "path": "pages/exam/index",
+      "style": {
+        "navigationBarTitleText": "考试"
+      }
+    },
+    {
+      "path": "pages/mine/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "我的"
+      }
+    },
+    {
+      "path": "pages/auth/login",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "登录"
+      }
+    }
+  ],
+  "subPackages": [
+    {
+      "root": "pages-sub",
+      "pages": [
+        {
+          "path": "bank/detail",
+          "style": { "navigationStyle": "custom", "navigationBarTitleText": "题库详情" }
+        },
+        { "path": "bank/market", "style": { "navigationBarTitleText": "题库市场" } },
+        { "path": "practice/answer", "style": { "navigationBarTitleText": "练习" } },
+        { "path": "practice/result", "style": { "navigationBarTitleText": "练习结果" } },
+        { "path": "exam/create", "style": { "navigationBarTitleText": "发起考试" } },
+        { "path": "exam/paper", "style": { "navigationBarTitleText": "考试" } },
+        { "path": "exam/record", "style": { "navigationBarTitleText": "成绩单" } },
+        { "path": "exam/review", "style": { "navigationBarTitleText": "试卷回顾" } },
+        { "path": "exam/history", "style": { "navigationBarTitleText": "考试记录" } },
+        { "path": "import/upload", "style": { "navigationBarTitleText": "文档导题" } },
+        { "path": "import/manual", "style": { "navigationBarTitleText": "手动导题" } },
+        { "path": "import/task", "style": { "navigationBarTitleText": "解析进度" } },
+        { "path": "wrong/list", "style": { "navigationBarTitleText": "错题本" } },
+        { "path": "favorite/list", "style": { "navigationBarTitleText": "我的收藏" } },
+        { "path": "note/list", "style": { "navigationBarTitleText": "我的笔记" } },
+        { "path": "search/index", "style": { "navigationBarTitleText": "搜索" } },
+        { "path": "member/index", "style": { "navigationBarTitleText": "会员中心" } },
+        { "path": "order/list", "style": { "navigationBarTitleText": "我的订单" } },
+        { "path": "record/list", "style": { "navigationBarTitleText": "练习记录" } },
+        { "path": "resource/list", "style": { "navigationBarTitleText": "学习资料" } },
+        { "path": "setting/index", "style": { "navigationBarTitleText": "设置" } }
+      ]
+    }
+  ],
+  "preloadRule": {
+    "pages/index/index": {
+      "network": "all",
+      "packages": ["pages-sub"]
+    }
+  },
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "识途刷题",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "backgroundColor": "#F5F7FA"
+  },
+  "tabBar": {
+    "color": "#8A94A6",
+    "selectedColor": "#2B7CFF",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/tabbar/home.png",
+        "selectedIconPath": "static/tabbar/home-active.png"
+      },
+      {
+        "pagePath": "pages/bank/list",
+        "text": "题库",
+        "iconPath": "static/tabbar/bank.png",
+        "selectedIconPath": "static/tabbar/bank-active.png"
+      },
+      {
+        "pagePath": "pages/ai/index",
+        "text": "AI",
+        "iconPath": "static/tabbar/ai.png",
+        "selectedIconPath": "static/tabbar/ai-active.png"
+      },
+      {
+        "pagePath": "pages/exam/index",
+        "text": "考试",
+        "iconPath": "static/tabbar/exam.png",
+        "selectedIconPath": "static/tabbar/exam-active.png"
+      },
+      {
+        "pagePath": "pages/mine/index",
+        "text": "我的",
+        "iconPath": "static/tabbar/mine.png",
+        "selectedIconPath": "static/tabbar/mine-active.png"
+      }
+    ]
+  }
+}
