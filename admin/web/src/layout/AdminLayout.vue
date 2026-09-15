@@ -21,8 +21,8 @@
               :key="item.path"
               :index="item.path"
             >
-              <el-icon v-if="item.meta.icon"><component :is="item.meta.icon" /></el-icon>
-              <span>{{ item.meta.title }}</span>
+              <el-icon v-if="item.meta?.icon"><component :is="item.meta.icon" /></el-icon>
+              <span>{{ item.meta?.title }}</span>
             </el-menu-item>
           </el-menu-item-group>
         </template>
@@ -66,7 +66,6 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { logout } from '@/api/auth'
 import type { RouteRecordRaw } from 'vue-router'
@@ -74,7 +73,6 @@ import type { RouteRecordRaw } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
-const { admin } = storeToRefs(auth)
 
 // 从路由表收集需要展示的菜单（已按权限过滤）
 const menuRoutes = computed(() =>

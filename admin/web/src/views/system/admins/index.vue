@@ -109,7 +109,7 @@ const query = reactive({
 const dialogVisible = ref(false)
 const isEdit = ref(false)
 const editId = ref<number | null>(null)
-const dialogTitle = computedTitle()
+const dialogTitle = ref('')
 const formRef = ref<FormInstance>()
 
 const form = reactive<AdminCreatePayload & { id?: number }>({

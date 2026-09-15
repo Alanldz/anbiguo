@@ -26,6 +26,7 @@ export const BANK_STATUS_MAP: Record<number, { label: string; type: '' | 'succes
 /** 题库审核提交状态 */
 export const BANK_AUDIT_PASS = 1
 export const BANK_AUDIT_REJECT = 4
+export const BANK_AUDIT_PENDING = 3
 /** 题库上下架状态 */
 export const BANK_STATUS_ONLINE = 1
 export const BANK_STATUS_OFFLINE = 2

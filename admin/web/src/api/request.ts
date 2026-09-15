@@ -1,7 +1,7 @@
 // 识途刷题 · 总后台 axios 封装
 // 统一请求/响应拦截：注入 token、统一错误提示、10401 跳登录、10403 提示无权限
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { STORAGE_TOKEN_KEY, CODE_UNAUTHORIZED, CODE_FORBIDDEN, CODE_SUCCESS } from '@/constants'
 import type { ApiResponse } from '@/types/api.d'
 
@@ -80,9 +80,9 @@ function handleBusinessError(body: ApiResponse) {
   }
 }
 
-/** 业务请求：自动解包到 data 字段 */
-export function http<T = unknown>(config: AxiosRequestConfig): Promise<T> {
-  return request(config).then((res) => (res.data as ApiResponse<T>).data)
+/** 业务请求：传入 url 与 axios 配置，自动解包到 data 字段 */
+export function http<T = unknown>(url: string, config: AxiosRequestConfig = {}): Promise<T> {
+  return request({ url, ...config }).then((res) => (res.data as ApiResponse<T>).data)
 }
 
 export default request

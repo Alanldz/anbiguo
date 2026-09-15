@@ -112,7 +112,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import { Search, Refresh, Plus, Edit, Delete } from '@element-plus/icons-vue'
 import { fetchBannerList, createBanner, updateBanner, deleteBanner } from '@/api/banner'
-import { BANNER_STATUS_MAP, DEFAULT_PAGE_SIZE } from '@/constants'
+import { BANNER_STATUS_MAP, BANNER_POSITION_MAP, DEFAULT_PAGE_SIZE } from '@/constants'
 import type { BannerItem, BannerPayload } from '@/types/api.d'
 
 const loading = ref(false)

@@ -3,6 +3,25 @@
 > 记录粒度：文档规范层面的变更。代码变更走 Git 提交记录。
 > 格式：`日期 · 变更人 · 变更内容 · 影响范围`
 
+## 2026-09-15 · 第十次变更
+
+**变更人**：WorkBuddy（待补充实际负责人）
+
+**变更内容**
+
+1. **部署阶段启动**：新增部署工具包 `deploy/`，配合 docs/08 使用：
+   - `deploy/README.md`：四域名部署拓扑（api / console / admin / h5）、目录约定、.env 核对表、
+     **联调冒烟清单**（主链路逐条 curl 用例：启动配置→登录→题库→练习→考试幂等→订单→双后台）
+   - `deploy/nginx/{api,console,admin,h5}.conf`：4 个站点配置——api 站点跑主应用；
+     console/admin 为静态前端 + `/console-api`、`/admin-api` 本机反代（admin/api 走 127.0.0.1:81 专用入口，不对外）；
+     h5 为静态站预留 `/api` 同域反代
+   - `deploy/scripts/server-init.sh`：服务器端初始化脚本（composer install / .env 检查 / migrate+seed /
+     storage:link / config+route 缓存 / 权限），server 与 admin 两个模式
+2. **docs/08** 顶部新增 deploy/ 快捷方式指引；**三个前端生产构建验证通过**
+   （admin/web、console/web 走 vue-tsc + vite build；client H5 走 uni build，产物 `client/dist/build/h5`）
+
+**影响范围**：部署交付物新增 `deploy/` 目录；文档导航更新。
+
 ## 2026-09-15 · 第九次变更
 
 **变更人**：WorkBuddy（待补充实际负责人）
