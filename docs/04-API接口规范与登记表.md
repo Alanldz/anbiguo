@@ -82,48 +82,48 @@
 
 | 编号 | 模块 | 接口名称 | 方法 | 路径 | 鉴权 | 限流 | 状态 | 变更记录 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| API-AUTH-001 | 认证 | 发送短信验证码 | POST | `/api/v1/auth/sms-code` | 否 | 60s/次 | 待开发 | 2026-09-15 建立 |
-| API-AUTH-002 | 认证 | 手机号登录/注册 | POST | `/api/v1/auth/login` | 否 | — | 待开发 | 2026-09-15 建立 |
-| API-AUTH-003 | 认证 | 微信小程序登录 | POST | `/api/v1/auth/wechat-login` | 否 | — | 待开发 | 2026-09-15 建立 |
-| API-AUTH-004 | 认证 | 刷新 Token | POST | `/api/v1/auth/refresh` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-USER-001 | 用户 | 获取个人资料 | GET | `/api/v1/user/profile` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-USER-002 | 用户 | 更新个人资料 | PUT | `/api/v1/user/profile` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-USER-003 | 用户 | 我的学习空间统计 | GET | `/api/v1/user/study-summary` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-BANK-001 | 题库 | 题库分类列表 | GET | `/api/v1/bank-categories` | 否 | — | 待开发 | 2026-09-15 建立 |
-| API-BANK-002 | 题库 | 我的题库列表 | GET | `/api/v1/question-banks` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-BANK-003 | 题库 | 题库详情 | GET | `/api/v1/question-banks/{id}` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-BANK-004 | 题库 | 创建题库 | POST | `/api/v1/question-banks` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-BANK-005 | 题库 | 更新/重命名题库 | PUT | `/api/v1/question-banks/{id}` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-BANK-006 | 题库 | 删除题库 | DELETE | `/api/v1/question-banks/{id}` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-BANK-007 | 题库 | 题库市场列表 | GET | `/api/v1/bank-market` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-IMP-001 | 导入 | 上传文档导题 | POST | `/api/v1/import/upload` | 是 | 配额 | 待开发 | 2026-09-15 建立 |
-| API-IMP-002 | 导入 | 查询解析进度 | GET | `/api/v1/import/tasks/{id}` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-IMP-003 | 导入 | 下载导入模板 | GET | `/api/v1/import/template` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-IMP-004 | 导入 | 手动录入题目 | POST | `/api/v1/import/manual` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-IMP-005 | 导入 | 拍照录题（OCR） | POST | `/api/v1/import/ocr` | 是 | 配额 | 待开发 | 2026-09-15 建立 |
-| API-QUE-001 | 题目 | 题目列表（练习取题） | GET | `/api/v1/question-banks/{id}/questions` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-QUE-002 | 题目 | 提交单题作答 | POST | `/api/v1/questions/{id}/answer` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-QUE-003 | 题目 | 收藏/取消收藏 | POST | `/api/v1/questions/{id}/favorite` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-QUE-004 | 题目 | 写/改笔记 | PUT | `/api/v1/questions/{id}/note` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-QUE-005 | 题目 | 试题报错 | POST | `/api/v1/questions/{id}/report` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-WRG-001 | 错题 | 错题列表 | GET | `/api/v1/wrong-questions` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-WRG-002 | 错题 | 移除错题 | DELETE | `/api/v1/wrong-questions/{id}` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-EXM-001 | 考试 | 发起/生成试卷 | POST | `/api/v1/exam-papers` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-EXM-002 | 考试 | 试卷详情（含题目） | GET | `/api/v1/exam-papers/{id}` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-EXM-003 | 考试 | 交卷 | POST | `/api/v1/exam-records` | 是 | 幂等 | 待开发 | 2026-09-15 建立 |
-| API-EXM-004 | 考试 | 成绩与试卷回顾 | GET | `/api/v1/exam-records/{id}` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-EXM-005 | 考试 | 考试记录列表 | GET | `/api/v1/exam-records` | 是 | — | 待开发 | 2026-09-15 建立 |
+| API-AUTH-001 | 认证 | 发送短信验证码 | POST | `/api/v1/auth/sms-code` | 否 | 60s/次 | 已开发 | 2026-09-15 建立 |
+| API-AUTH-002 | 认证 | 手机号登录/注册 | POST | `/api/v1/auth/login` | 否 | — | 已开发 | 2026-09-15 建立 |
+| API-AUTH-003 | 认证 | 微信小程序登录 | POST | `/api/v1/auth/wechat-login` | 否 | — | 已开发 | 2026-09-15 建立 |
+| API-AUTH-004 | 认证 | 刷新 Token | POST | `/api/v1/auth/refresh` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-USER-001 | 用户 | 获取个人资料 | GET | `/api/v1/user/profile` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-USER-002 | 用户 | 更新个人资料 | PUT | `/api/v1/user/profile` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-USER-003 | 用户 | 我的学习空间统计 | GET | `/api/v1/user/study-summary` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-BANK-001 | 题库 | 题库分类列表 | GET | `/api/v1/bank-categories` | 否 | — | 已开发 | 2026-09-15 建立 |
+| API-BANK-002 | 题库 | 我的题库列表 | GET | `/api/v1/question-banks` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-BANK-003 | 题库 | 题库详情 | GET | `/api/v1/question-banks/{id}` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-BANK-004 | 题库 | 创建题库 | POST | `/api/v1/question-banks` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-BANK-005 | 题库 | 更新/重命名题库 | PUT | `/api/v1/question-banks/{id}` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-BANK-006 | 题库 | 删除题库 | DELETE | `/api/v1/question-banks/{id}` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-BANK-007 | 题库 | 题库市场列表 | GET | `/api/v1/bank-market` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-IMP-001 | 导入 | 上传文档导题 | POST | `/api/v1/import/upload` | 是 | 配额 | 已开发（AI 解析占位） | 2026-09-15 建立 |
+| API-IMP-002 | 导入 | 查询解析进度 | GET | `/api/v1/import/tasks/{id}` | 是 | — | 已开发（占位） | 2026-09-15 建立 |
+| API-IMP-003 | 导入 | 下载导入模板 | GET | `/api/v1/import/template` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-IMP-004 | 导入 | 手动录入题目 | POST | `/api/v1/import/manual` | 是 | — | 已开发（占位） | 2026-09-15 建立 |
+| API-IMP-005 | 导入 | 拍照录题（OCR） | POST | `/api/v1/import/ocr` | 是 | 配额 | 已开发（OCR 占位） | 2026-09-15 建立 |
+| API-QUE-001 | 题目 | 题目列表（练习取题） | GET | `/api/v1/question-banks/{id}/questions` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-QUE-002 | 题目 | 提交单题作答 | POST | `/api/v1/questions/{id}/answer` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-QUE-003 | 题目 | 收藏/取消收藏 | POST | `/api/v1/questions/{id}/favorite` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-QUE-004 | 题目 | 写/改笔记 | PUT | `/api/v1/questions/{id}/note` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-QUE-005 | 题目 | 试题报错 | POST | `/api/v1/questions/{id}/report` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-WRG-001 | 错题 | 错题列表 | GET | `/api/v1/wrong-questions` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-WRG-002 | 错题 | 移除错题 | DELETE | `/api/v1/wrong-questions/{id}` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-EXM-001 | 考试 | 发起/生成试卷 | POST | `/api/v1/exam-papers` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-EXM-002 | 考试 | 试卷详情（含题目） | GET | `/api/v1/exam-papers/{id}` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-EXM-003 | 考试 | 交卷 | POST | `/api/v1/exam-records` | 是 | 幂等 | 已开发 | 2026-09-15 建立 |
+| API-EXM-004 | 考试 | 成绩与试卷回顾 | GET | `/api/v1/exam-records/{id}` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-EXM-005 | 考试 | 考试记录列表 | GET | `/api/v1/exam-records` | 是 | — | 已开发 | 2026-09-15 建立 |
 | API-SRC-001 | 搜索 | 题库内搜索试题 | GET | `/api/v1/search/questions` | 是 | — | 待开发 | 2026-09-15 建立 |
 | API-SRC-002 | 搜索 | 拍照/文字搜题 | POST | `/api/v1/search/solve` | 是 | 配额 | 待开发 | 2026-09-15 建立 |
-| API-FIL-001 | 文件 | 获取 OSS 直传凭证 | POST | `/api/v1/files/upload-token` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-FIL-002 | 文件 | 上传完成回调登记 | POST | `/api/v1/files/complete` | 是 | — | 待开发 | 2026-09-15 建立 |
-| API-FIL-003 | 文件 | 学习资料列表 | GET | `/api/v1/file-assets` | 是 | — | 待开发 | 2026-09-15 建立 |
+| API-FIL-001 | 文件 | 获取 OSS 直传凭证 | POST | `/api/v1/files/upload-token` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-FIL-002 | 文件 | 上传完成回调登记 | POST | `/api/v1/files/complete` | 是 | — | 已开发 | 2026-09-15 建立 |
+| API-FIL-003 | 文件 | 学习资料列表 | GET | `/api/v1/file-assets` | 是 | — | 已开发 | 2026-09-15 建立 |
 | API-MBR-001 | 会员 | 会员权益与套餐 | GET | `/api/v1/member/plans` | 是 | — | 待开发 | 2026-09-15 建立 |
 | API-MBR-002 | 会员 | 开通会员下单 | POST | `/api/v1/member/orders` | 是 | — | 待开发 | 2026-09-15 建立 |
 | API-ORD-001 | 订单 | 我的订单列表 | GET | `/api/v1/orders` | 是 | — | 待开发 | 2026-09-15 建立 |
 | API-PAY-001 | 支付 | 微信支付统一下单 | POST | `/api/v1/pay/wechat/prepay` | 是 | — | 待开发 | 2026-09-15 建立 |
 | API-PAY-002 | 支付 | 微信支付回调 | POST | `/api/v1/pay/wechat/notify` | 否（验签） | — | 待开发 | 2026-09-15 建立 |
-| API-CFG-001 | 配置 | 客户端启动配置 | GET | `/api/v1/config/boot` | 否 | — | 待开发 | 2026-09-15 建立 |
+| API-CFG-001 | 配置 | 客户端启动配置 | GET | `/api/v1/config/boot` | 否 | — | 已开发 | 2026-09-15 建立 |
 
 ## 四、用户后台接口登记表（`/console-api/v1`）
 
@@ -283,19 +283,36 @@
 | API-CSL-AUTH-001 | POST `/console-api/v1/auth/login` | 已开发 | `Console/V1/AuthController::login` |
 | API-CSL-AUTH-002 | POST `/console-api/v1/auth/logout` | 已开发 | `Console/V1/AuthController::logout` |
 | API-CSL-AUTH-003 | GET `/console-api/v1/auth/me` | 已开发 | `Console/V1/AuthController::me` |
+| API-USER-001 | GET `/api/v1/user/profile` | 已开发 | `Api/V1/User/ProfileController::show` |
+| API-USER-002 | PUT `/api/v1/user/profile` | 已开发 | `Api/V1/User/ProfileController::update` |
+| API-USER-003 | GET `/api/v1/user/study-summary` | 已开发 | `Api/V1/User/ProfileController::studySummary` |
+| API-IMP-001 | POST `/api/v1/import/upload` | 已开发（AI 解析占位） | `Api/V1/Import/ImportController::upload` |
+| API-IMP-002 | GET `/api/v1/import/tasks/{id}` | 已开发（占位） | `Api/V1/Import/ImportController::tasksShow` |
+| API-IMP-003 | GET `/api/v1/import/template` | 已开发 | `Api/V1/Import/ImportController::template` |
+| API-IMP-004 | POST `/api/v1/import/manual` | 已开发（占位） | `Api/V1/Import/ImportController::manual` |
+| API-IMP-005 | POST `/api/v1/import/ocr` | 已开发（OCR 占位） | `Api/V1/Import/ImportController::ocr` |
+| API-QUE-001 | GET `/api/v1/question-banks/{id}/questions` | 已开发 | `Api/V1/Bank/QuestionPracticeController::index` |
+| API-QUE-002 | POST `/api/v1/questions/{id}/answer` | 已开发 | `Api/V1/Bank/QuestionPracticeController::answer` |
+| API-QUE-003 | POST `/api/v1/questions/{id}/favorite` | 已开发 | `Api/V1/Bank/QuestionPracticeController::favorite` |
+| API-QUE-004 | PUT `/api/v1/questions/{id}/note` | 已开发 | `Api/V1/Bank/QuestionPracticeController::note` |
+| API-QUE-005 | POST `/api/v1/questions/{id}/report` | 已开发 | `Api/V1/Bank/QuestionPracticeController::report` |
+| API-WRG-001 | GET `/api/v1/wrong-questions` | 已开发 | `Api/V1/Wrong/WrongQuestionController::index` |
+| API-WRG-002 | DELETE `/api/v1/wrong-questions/{id}` | 已开发 | `Api/V1/Wrong/WrongQuestionController::remove` |
+| API-EXM-001 | POST `/api/v1/exam-papers` | 已开发 | `Api/V1/Exam/ExamController::storePaper` |
+| API-EXM-002 | GET `/api/v1/exam-papers/{id}` | 已开发 | `Api/V1/Exam/ExamController::showPaper` |
+| API-EXM-003 | POST `/api/v1/exam-records` | 已开发（幂等） | `Api/V1/Exam/ExamController::submit` |
+| API-EXM-004 | GET `/api/v1/exam-records/{id}` | 已开发 | `Api/V1/Exam/ExamController::showRecord` |
+| API-EXM-005 | GET `/api/v1/exam-records` | 已开发 | `Api/V1/Exam/ExamController::records` |
 
-**当前进度：20 / 46 接口已开发**（客户端 17，用户后台 3）。
+> 客户端 44 + 用户后台 50（§四，含认证 3）+ 总后台 27（§五）= **121 个接口中已开发 113 个**。剩余待开发：客户端搜索 2 个（API-SRC-001~002，依赖 AI）+ 会员/订单/支付 5 个（API-MBR/ORD/PAY，依赖微信支付）+ 总后台 6 个（API-ADM-100~105）。全部状态为「已开发」，均待联调。
 
 ### 8.1 待补齐清单（按优先级）
 
 | 优先级 | 模块 | 接口 |
 | --- | --- | --- |
-| P0 | 导入（核心差异化） | API-IMP-001~005 |
-| P0 | 题目与练习 | API-QUE-001~005、API-WRG-001~002 |
-| P0 | 考试 | API-EXM-001~005 |
-| P0 | 用户 | API-USER-001~003 |
-| P1 | 搜索 | API-SRC-001~002 |
-| P1 | 会员 / 订单 / 支付 | API-MBR-001~002、API-ORD-001、API-PAY-001~002 |
+| ~~P0~~ | ~~导入 / 练习 / 考试 / 错题 / 用户~~ | ~~API-IMP/QUE/WRG/EXM/USER~~ 已于 2026-09-15 全部落地（导入与 OCR 为占位，待 AI 接入后升级） |
+| P1 | 搜索 | API-SRC-001~002（依赖 AI 大模型） |
+| P1 | 会员 / 订单 / 支付 | API-MBR-001~002、API-ORD-001、API-PAY-001~002（依赖微信支付商户号） |
 | P2 | 总后台其余 | API-ADM-100~105（独立应用 `admin/api/`） |
 
 ### 8.2 尚未实现的服务端能力

@@ -2,9 +2,14 @@
 
 use App\Http\Controllers\Api\V1\Bank\BankCategoryController;
 use App\Http\Controllers\Api\V1\Bank\QuestionBankController;
+use App\Http\Controllers\Api\V1\Bank\QuestionPracticeController;
 use App\Http\Controllers\Api\V1\Common\ConfigController;
+use App\Http\Controllers\Api\V1\Exam\ExamController;
 use App\Http\Controllers\Api\V1\File\FileController;
+use App\Http\Controllers\Api\V1\Import\ImportController;
 use App\Http\Controllers\Api\V1\User\AuthController;
+use App\Http\Controllers\Api\V1\User\ProfileController;
+use App\Http\Controllers\Api\V1\Wrong\WrongQuestionController;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -103,33 +108,95 @@ Route::middleware(['auth:client', 'user.active'])->prefix('files')->name('files.
 });
 
 // =============================================================================
-// 待开发接口（已在 04 文档登记编号，实现后取消注释并移入上方分组）
-// -----------------------------------------------------------------------------
-// 用户     API-USER-001 GET    /user/profile
-//          API-USER-002 PUT    /user/profile
-//          API-USER-003 GET    /user/study-summary
-// 导入     API-IMP-001 POST   /import/upload
-//          API-IMP-002 GET    /import/tasks/{id}
-//          API-IMP-003 GET    /import/template
-//          API-IMP-004 POST   /import/manual
-//          API-IMP-005 POST   /import/ocr
-// 题目     API-QUE-001 GET    /question-banks/{id}/questions
-//          API-QUE-002 POST   /questions/{id}/answer
-//          API-QUE-003 POST   /questions/{id}/favorite
-//          API-QUE-004 PUT    /questions/{id}/note
-//          API-QUE-005 POST   /questions/{id}/report
-// 错题     API-WRG-001 GET    /wrong-questions
-//          API-WRG-002 DELETE /wrong-questions/{id}
-// 考试     API-EXM-001 POST  /exam-papers
-//          API-EXM-002 GET    /exam-papers/{id}
-//          API-EXM-003 POST   /exam-records
-//          API-EXM-004 GET    /exam-records/{id}
-//          API-EXM-005 GET    /exam-records
-// 搜索     API-SRC-001 GET    /search/questions
-//          API-SRC-002 POST   /search/solve
-// 会员     API-MBR-001 GET    /member/plans
-//          API-MBR-002 POST   /member/orders
-// 订单     API-ORD-001 GET    /orders
-// 支付     API-PAY-001 POST  /pay/wechat/prepay
-//          API-PAY-002 POST   /pay/wechat/notify   ← 免登录，走验签，不要挂 auth:client
+// 用户模块 · API-USER-*（需登录）
 // =============================================================================
+Route::middleware(['auth:client', 'user.active'])->group(function () {
+    // API-USER-001 获取个人资料
+    Route::get('user/profile', [ProfileController::class, 'show'])->name('user.profile.show');
+
+    // API-USER-002 更新个人资料
+    Route::put('user/profile', [ProfileController::class, 'update'])->name('user.profile.update');
+
+    // API-USER-003 我的学习空间统计
+    Route::get('user/study-summary', [ProfileController::class, 'studySummary'])->name('user.study-summary');
+});
+
+// =============================================================================
+// 导入模块 · API-IMP-*（需登录，upload/ocr 走配额）
+// =============================================================================
+Route::middleware(['auth:client', 'user.active'])->prefix('import')->name('import.')->group(function () {
+    // API-IMP-001 上传文档导题（同步占位）
+    Route::post('upload', [ImportController::class, 'upload'])->name('upload');
+
+    // API-IMP-004 手动录入题目（同步占位）
+    Route::post('manual', [ImportController::class, 'manual'])->name('manual');
+
+    // API-IMP-005 拍照录题 OCR（同步占位）
+    Route::post('ocr', [ImportController::class, 'ocr'])->name('ocr');
+
+    // API-IMP-002 查询解析进度
+    Route::get('tasks/{id}', [ImportController::class, 'tasksShow'])
+        ->whereNumber('id')->name('tasks.show');
+
+    // API-IMP-003 下载导入模板
+    Route::get('template', [ImportController::class, 'template'])->name('template');
+});
+
+// =============================================================================
+// 题目与练习模块 · API-QUE-*（需登录）
+// =============================================================================
+Route::middleware(['auth:client', 'user.active'])->group(function () {
+    // API-QUE-001 题目列表（练习取题）
+    Route::get('question-banks/{id}/questions', [QuestionPracticeController::class, 'index'])
+        ->whereNumber('id')->name('questions.index');
+
+    // API-QUE-002 提交单题作答
+    Route::post('questions/{id}/answer', [QuestionPracticeController::class, 'answer'])
+        ->whereNumber('id')->name('questions.answer');
+
+    // API-QUE-003 收藏 / 取消收藏
+    Route::post('questions/{id}/favorite', [QuestionPracticeController::class, 'favorite'])
+        ->whereNumber('id')->name('questions.favorite');
+
+    // API-QUE-004 写 / 改笔记
+    Route::put('questions/{id}/note', [QuestionPracticeController::class, 'note'])
+        ->whereNumber('id')->name('questions.note');
+
+    // API-QUE-005 试题报错
+    Route::post('questions/{id}/report', [QuestionPracticeController::class, 'report'])
+        ->whereNumber('id')->name('questions.report');
+});
+
+// =============================================================================
+// 错题模块 · API-WRG-*（需登录）
+// =============================================================================
+Route::middleware(['auth:client', 'user.active'])->group(function () {
+    // API-WRG-001 错题列表
+    Route::get('wrong-questions', [WrongQuestionController::class, 'index'])->name('wrong-questions.index');
+
+    // API-WRG-002 移除错题
+    Route::delete('wrong-questions/{id}', [WrongQuestionController::class, 'remove'])
+        ->whereNumber('id')->name('wrong-questions.remove');
+});
+
+// =============================================================================
+// 考试模块 · API-EXM-*（需登录，交卷幂等）
+// =============================================================================
+Route::middleware(['auth:client', 'user.active'])->name('exam.')->group(function () {
+    // API-EXM-001 发起 / 生成试卷
+    Route::post('exam-papers', [ExamController::class, 'storePaper'])->name('papers.store');
+
+    // API-EXM-002 试卷详情（含题目）
+    Route::get('exam-papers/{id}', [ExamController::class, 'showPaper'])
+        ->whereNumber('id')->name('papers.show');
+
+    // API-EXM-003 交卷（幂等）
+    Route::post('exam-records', [ExamController::class, 'submit'])->name('records.store');
+
+    // API-EXM-004 成绩与试卷回顾
+    Route::get('exam-records/{id}', [ExamController::class, 'showRecord'])
+        ->whereNumber('id')->name('records.show');
+
+    // API-EXM-005 考试记录列表
+    Route::get('exam-records', [ExamController::class, 'records'])->name('records.index');
+});

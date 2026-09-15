@@ -3,6 +3,24 @@
 > 记录粒度：文档规范层面的变更。代码变更走 Git 提交记录。
 > 格式：`日期 · 变更人 · 变更内容 · 影响范围`
 
+## 2026-09-15 · 第八次变更
+
+**变更人**：WorkBuddy（待补充实际负责人）
+
+**变更内容**
+
+1. **客户端 P0 接口 27 个全部落地**（导入 / 练习 / 错题 / 考试 / 用户）：
+   - 新增字段级契约 `client/API-CONTRACT.md`，响应字段严格对齐 `client/src/types/index.ts` 与 Mock 数据形状
+   - 新增 `Api/V1` 控制器 5 个（Profile/Import/QuestionPractice/WrongQuestion/Exam）+ `Services/Api/` 服务 5 个，
+     `routes/client.php` 待开发区替换为真实路由（27 条，`auth:client + user.active`）
+   - 交卷幂等（重复提交返回已有成绩）；答错自动入错题本（upsert 累计）并更新 `user_daily_stats`
+   - 导入与 OCR 为**同步占位实现**（建 `question_import_tasks`，status=待校对，result_json 标注 pending），
+     待 AI 大模型账号接入后升级为真实解析
+2. **`docs/04` 台账全面校准**：§二 客户端登记表状态列与 §八 实况对齐；
+   §八 补登 27 行落地文件；进度更新为 121 个接口已开发 113 个（剩余：搜索 2、会员/订单/支付 5、总后台 6）
+
+**影响范围**：客户端全部 P0 模块、接口台账（§二状态列批量修正为破坏性可见变更）。
+
 ## 2026-09-15 · 第七次变更
 
 **变更人**：WorkBuddy（待补充实际负责人）

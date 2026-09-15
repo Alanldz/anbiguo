@@ -138,9 +138,16 @@ php artisan queue:work redis --queue=default,import,notify,export
 | API-CSL-EXM-001~002 | GET | `/console-api/v1/exam-records*` | 考试记录 |
 | API-CSL-ORD-001~004 | GET | `/console-api/v1/orders*` `member*` | 订单与会员 |
 | API-CSL-ACC-001~004 | GET/PUT | `/console-api/v1/account/*` | 资料 / 密码 / 换绑手机 |
+| API-USER-001~002 | GET/PUT | `/api/v1/user/profile` | 个人资料读写 |
+| API-USER-003 | GET | `/api/v1/user/study-summary` | 学习空间统计 |
+| API-IMP-001~005 | GET/POST | `/api/v1/import/*` | 导题（AI 解析占位）/ 模板 / 手动录入 / OCR |
+| API-QUE-001~005 | GET/POST/PUT | `/api/v1/question-banks/{id}/questions` `questions/{id}/*` | 练习取题 / 作答 / 收藏 / 笔记 / 报错 |
+| API-WRG-001~002 | GET/DELETE | `/api/v1/wrong-questions*` | 错题列表 / 移除 |
+| API-EXM-001~005 | GET/POST | `/api/v1/exam-papers*` `exam-records*` | 组卷 / 交卷（幂等）/ 成绩 / 记录 |
 
 > 用户后台共 50 个接口已实现，字段级契约见 `../console/API-CONTRACT.md`，前端工程见 `../console/web/`。
-> 其余客户端接口已在 `routes/client.php` 底部按编号列队，`docs/04` 台账同步登记为「待开发」。
+> 客户端 P0 接口 27 个已实现（USER/IMP/QUE/WRG/EXM），字段级契约见 `../client/API-CONTRACT.md`。
+> 客户端剩余：搜索 API-SRC-001~002（依赖 AI）、会员/订单/支付 API-MBR/ORD/PAY（依赖微信支付商户号）。
 
 ---
 
