@@ -138,13 +138,58 @@ function handleEntry(item: { key?: string; label: string; path?: string }) {
     uni.navigateTo({ url: item.path })
     return
   }
-  uni.showToast({ title: `${item.label} 开发中`, icon: 'none' })
+  // 精简题/试题闪卡/考点速记/离线练习等规划中的功能
+  uni.showToast({ title: '该功能规划中，敬请期待', icon: 'none' })
 }
 
+/** 右上角「⋯」：重命名（API-BANK-005）/ 删除（API-BANK-006）；分享与导出暂无客户端接口 */
 function handleMore() {
   uni.showActionSheet({
     itemList: ['重命名题库', '分享题库', '导出题库', '删除题库'],
-    success: () => uni.showToast({ title: '该功能开发中', icon: 'none' })
+    success: ({ tapIndex }) => {
+      if (tapIndex === 0) handleRename()
+      else if (tapIndex === 1) uni.showToast({ title: '分享功能待上线', icon: 'none' })
+      else if (tapIndex === 2) uni.showToast({ title: '导出功能待上线', icon: 'none' })
+      else handleDelete()
+    }
+  })
+}
+
+/** API-BANK-005 更新题库名：弹输入框 → 调接口 → 刷新 store 与页面标题 */
+function handleRename() {
+  uni.showModal({
+    title: '重命名题库',
+    editable: true,
+    placeholderText: '请输入新的题库名称',
+    content: bank.value?.title ?? '',
+    success: async (modal) => {
+      const title = (modal.content ?? '').trim()
+      if (!modal.confirm || !title) return
+      await updateBank(bankId.value, { title })
+      // 刷新 store 与页面标题
+      if (bank.value) {
+        bankStore.currentBank = { ...bank.value, title }
+      }
+      uni.setNavigationBarTitle({ title })
+      uni.showToast({ title: '重命名成功', icon: 'none' })
+    }
+  })
+}
+
+/** API-BANK-006 删除题库：二次确认 → 软删 → 返回题库列表页 */
+function handleDelete() {
+  uni.showModal({
+    title: '删除题库',
+    content: '删除后题库进入回收站，确定删除吗？',
+    confirmColor: '#EF4444',
+    success: async (modal) => {
+      if (!modal.confirm) return
+      await deleteBank(bankId.value)
+      bankStore.currentBank = null
+      bankStore.banks = bankStore.banks.filter((item) => item.id !== bankId.value)
+      uni.showToast({ title: '已删除', icon: 'none' })
+      setTimeout(() => uni.navigateBack(), 500)
+    }
   })
 }
 </script>

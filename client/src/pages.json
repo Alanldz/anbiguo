@@ -79,7 +79,11 @@
         { "path": "order/list", "style": { "navigationBarTitleText": "我的订单" } },
         { "path": "record/list", "style": { "navigationBarTitleText": "练习记录" } },
         { "path": "resource/list", "style": { "navigationBarTitleText": "学习资料" } },
-        { "path": "setting/index", "style": { "navigationBarTitleText": "设置" } }
+        { "path": "setting/index", "style": { "navigationBarTitleText": "设置" } },
+        { "path": "notification/list", "style": { "navigationBarTitleText": "消息中心" } },
+        { "path": "master/list", "style": { "navigationBarTitleText": "我的斩题" } },
+        { "path": "agreement/index", "style": { "navigationBarTitleText": "协议详情" } },
+        { "path": "feedback/create", "style": { "navigationBarTitleText": "意见反馈" } }
       ]
     }
   ],

@@ -58,12 +58,35 @@ export function fetchImportTask(id: number): Promise<ImportTask> {
   return http.get<ImportTask>(`/api/v1/import/tasks/${id}`)
 }
 
-/** API-IMP-003 下载导入模板（返回文件地址，由后端重定向到七牛签名 URL） */
-export function fetchImportTemplateUrl(format: 'xlsx' | 'docx' = 'xlsx'): string {
-  return `/api/v1/import/template?format=${format}`
+/** 导入模板结构（API-IMP-003 GET /import/template 响应） */
+export interface ImportTemplate {
+  columns: Array<{ name: string; required: boolean; desc: string }>
+  sample_url: string
 }
 
-/** API-IMP-004 手动录入题目 */
+/**
+ * API-IMP-003 获取导入模板（固定模板结构 + 示例下载地址）
+ * Mock 返回契约 §六 的固定结构；真实模式由调用方处理 sample_url（复制链接 / 下载）。
+ */
+export async function fetchImportTemplate(): Promise<ImportTemplate> {
+  if (USE_MOCK) {
+    return mockDelay({
+      columns: [
+        { name: '题干', required: true, desc: '题目内容，支持富文本' },
+        { name: '题型', required: true, desc: '单选/多选/判断/填空/简答' },
+        { name: '选项', required: false, desc: '选择题填写，格式：A.选项内容|B.选项内容' },
+        { name: '答案', required: true, desc: '选择题填选项字母，判断题填 对/错' },
+        { name: '解析', required: false, desc: '答案解析' },
+        { name: '难度', required: false, desc: '易/中/难' },
+        { name: '章节', required: false, desc: '所属章节名称' }
+      ],
+      sample_url: ''
+    })
+  }
+  return http.get<ImportTemplate>('/api/v1/import/template')
+}
+
+/** API-IMP-004 手动录入题目（本期占位：创建待校对导入任务，返回任务 id） */
 export function createQuestionManual(data: {
   bank_id: number
   type: number
@@ -71,6 +94,8 @@ export function createQuestionManual(data: {
   options: Array<{ key: string; content: string }>
   answer: string
   analysis?: string
+  difficulty?: number
+  score?: number
 }): Promise<{ id: number }> {
   if (USE_MOCK) return mockDelay({ id: Date.now() })
   return http.post<{ id: number }>('/api/v1/import/manual', data)

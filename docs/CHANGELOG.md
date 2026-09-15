@@ -3,6 +3,28 @@
 > 记录粒度：文档规范层面的变更。代码变更走 Git 提交记录。
 > 格式：`日期 · 变更人 · 变更内容 · 影响范围`
 
+## 2026-09-15 · 第十四次变更
+
+**变更人**：WorkBuddy（待补充实际负责人）
+
+**变更内容**
+
+1. **审计缺口修复**：pages.json 补注册 notification/list、master/list、agreement/index 三条
+   遗漏路由（页面文件此前存在但跳转会失败）；mine 页铃铛接通消息中心。
+2. **客户端占位页清零**：激活 13 个占位页为真实实现——考试域 5 页（create/paper/record/
+   review/history，EXM-001~005）、import/task（IMP-002 轮询）、import/manual（IMP-004）、
+   practice/result、bank/market（BANK-007）、search（SRC-001，AI 拍照搜题保留待接入提示）、
+   member（MBR-001）、order/list（ORD-001）、resource/list（FIL-003）。Mock 全量补齐，
+   路由与页面文件双向核验 33/33 一致。
+3. **假开发中入口接通**：题库详情与列表的「重命名题库」（BANK-005）/「删除题库」（BANK-006）；
+   导入页与 AI 页「模板下载」（IMP-003）。分享/导出/AI 搜题/微信支付等改「待上线/待接入」文案。
+4. **新增 API-FBK-001 提交意见反馈**（POST /api/v1/feedbacks）：此前仅有总后台处理端
+   （ADM-104），客户端提交接口在台账中缺失，本次补齐（模型 SysFeedback / FeedbackService /
+   FeedbackController / 路由）；客户端新增 feedback/create 提交页并接通 mine 页入口。
+5. **台账进度**：141 个接口已开发 138 个（§八同步）。客户端 27 页全部为真实实现。
+
+**影响范围**：server（1 接口/1 模型/1 服务/1 控制器/路由）、client（14 页激活/新建 + 入口接通 + pages.json）、docs/04、契约文档 §十三
+
 ## 2026-09-15 · 第十三次变更
 
 **变更人**：WorkBuddy（待补充实际负责人）

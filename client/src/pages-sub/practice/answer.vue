@@ -104,6 +104,8 @@ const MODE_LABEL: Record<string, string> = {
 
 const bankId = ref(0)
 const mode = ref('sequence')
+/** 练习开始时间（进入结果页计算用时） */
+const startTime = ref(Date.now())
 const questions = ref<Question[]>([])
 const currentIndex = ref(0)
 const answers = ref<Record<number, string>>({})
@@ -197,11 +199,10 @@ function handleSheetSelect(index: number) {
 function handleFinish() {
   showSheet.value = false
   const correctCount = Object.values(correctMap.value).filter(Boolean).length
-  uni.showModal({
-    title: '练习完成',
-    content: `已答 ${Object.keys(answered.value).length} 题，答对 ${correctCount} 题。错题已自动加入错题本。`,
-    showCancel: false,
-    success: () => uni.navigateBack()
+  const seconds = Math.floor((Date.now() - startTime.value) / 1000)
+  // 跳转练习结果页（P-10），携带统计参数
+  uni.redirectTo({
+    url: `/pages-sub/practice/result?correct=${correctCount}&total=${questions.value.length}&seconds=${seconds}&bank_id=${bankId.value}&mode=${mode.value}`
   })
 }
 

@@ -136,14 +136,22 @@ export interface StudySummary {
   study_minutes: number
 }
 
-/** 导入任务 */
+/**
+ * 导入任务（API-IMP-002）
+ * status 说明：后端 ImportTaskStatus 含「待校对」五态（1→pending / 2→parsing /
+ * 3→proofread / 4→success / 5→failed），按契约放宽为 string，由页面做文案映射。
+ */
 export interface ImportTask {
   id: number
   bank_id: number
   origin_name: string
   total_count: number
   parsed_count: number
-  status: 'pending' | 'parsing' | 'success' | 'failed'
+  status: string
+  /** 状态文案（后端可下发，如「待校对」） */
+  status_text?: string
+  /** 解析进度（0~100），缺省时由 parsed_count / total_count 推算 */
+  progress?: number
   fail_reason?: string
 }
 
@@ -259,4 +267,116 @@ export interface ErrorProneItem {
   correct_rate: number // 全网正确率（百分比数值，如 32.5）
   answer_count: number // 答题人数
   is_wrong: boolean // 当前用户是否已在错题本
+}
+
+/** 试卷（API-EXM-001/002，questions 仅详情/组卷响应携带） */
+export interface ExamPaper {
+  id: number
+  title: string
+  bank_id: number
+  duration_minutes: number
+  total_score: number
+  question_count: number
+  questions?: Question[]
+}
+
+/** 考试记录（API-EXM-003/004/005） */
+export interface ExamRecord {
+  id: number
+  paper_id: number
+  title: string
+  score: number
+  total_score: number
+  correct_count: number
+  question_count: number
+  cost_seconds: number
+  created_at: string
+}
+
+/** 成绩详情逐题作答明细（API-EXM-004） */
+export interface ExamRecordAnswer {
+  question_id: number
+  stem_preview: string // 题干摘要
+  user_answer: string // 我的答案
+  is_correct: boolean // 是否答对
+  score: number // 本题得分
+}
+
+/** 成绩详情（API-EXM-004 成绩单 + 试卷回顾） */
+export interface ExamRecordDetail extends ExamRecord {
+  pass_score: number // 及格线
+  is_passed: boolean // 是否及格
+  answers: ExamRecordAnswer[] // 逐题作答明细
+}
+
+/** 题库市场条目（API-BANK-007 /api/v1/bank-market），在题库结构上扩展运营展示字段 */
+export interface MarketBankItem extends QuestionBank {
+  description: string // 简介
+  usage_count: number // 使用人数（热度）
+  is_recommend?: boolean // 是否推荐角标
+}
+
+/** 会员套餐（API-MBR-001 /api/v1/member/plans），MemberLevel：0 普通 1 月卡 2 季卡 3 年卡 4 永久 */
+export interface MemberPlan {
+  id: number
+  name: string // 套餐名，如「连续包月」
+  level: number // MemberLevel
+  level_text: string // 等级文案
+  duration_days: number // 有效天数，永久为 0
+  price_amount: number // 现价（元）
+  origin_amount: number // 原价（划线价）
+  description: string
+  benefits: string[] // 权益列表
+  ai_import_quota: number // 赠送 AI 导题配额
+  is_recommend: boolean // 是否推荐
+}
+
+/** 订单状态，对应后端 OrderStatus 枚举（API-ORD-001） */
+export enum OrderStatus {
+  Unpaid = 0, // 待支付
+  Paid = 1, // 已支付
+  Canceled = 2, // 已取消
+  Refunded = 3, // 已退款
+  Closed = 4 // 已关闭
+}
+
+/** 订单条目（API-ORD-001 /api/v1/orders） */
+export interface OrderItem {
+  id: number
+  order_no: string // 订单号
+  order_type: number // 订单类型：1 会员
+  order_type_text: string // 订单类型文案
+  biz_id: number // 关联业务 id（如套餐 id）
+  biz_title: string // 商品名
+  origin_amount: number // 原价
+  discount_amount: number // 优惠金额
+  pay_amount: number // 实付金额
+  status: OrderStatus // 订单状态
+  status_text: string // 状态文案
+  created_at: string // 下单时间
+  paid_at: string | null // 支付时间
+}
+
+/** 学习资料条目（API-FIL-003 /api/v1/file-assets，biz_type=3 学习资料） */
+export interface ResourceItem {
+  id: number
+  bank_id: number | null // 所属题库，null 表示不限定
+  file_name: string // 文件名（含扩展名）
+  file_type: string // 类型（pdf/doc/mp4 等小写扩展名）
+  file_size: number // 字节数
+  url?: string // 下载/预览地址（私密文件为签名 URL）
+  created_at: string // 上传时间
+}
+
+/** 搜索结果题（API-SRC-001 /api/v1/search/questions），Question 形状附加所属题库名 */
+export interface SearchQuestionItem extends Question {
+  bank_name?: string // 所属题库名称（服务端未下发时由前端兜底）
+}
+
+/** 意见反馈提交参数（API-FBK-001 POST /api/v1/feedbacks） */
+export interface FeedbackSubmitParams {
+  type: 1 | 2 | 3 // 反馈类型：1 功能异常 / 2 体验建议 / 3 其他
+  content: string // 反馈内容（5~500 字）
+  images?: number[] // 截图 file_assets id 数组（最多 9 张）
+  contact?: string // 联系方式（选填，≤64 字）
 }

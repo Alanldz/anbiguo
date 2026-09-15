@@ -8,17 +8,25 @@
 import type {
   BankCategory,
   ErrorProneItem,
+  ExamPaper,
+  ExamRecordAnswer,
+  ExamRecordDetail,
   FavoriteItem,
   ImportTask,
   MasteredItem,
+  MemberPlan,
+  MarketBankItem,
   NoteItem,
   NotificationItem,
+  OrderItem,
   PracticeRecordItem,
   PracticeStatus,
   Question,
   QuestionBank,
   QuestionOption,
   RecycleBankItem,
+  ResourceItem,
+  SearchQuestionItem,
   StudySummary,
   UserProfile
 } from '@/types'
@@ -26,6 +34,7 @@ import {
   BankSourceType,
   BankStatus,
   NotificationType,
+  OrderStatus,
   PracticeMode,
   PracticeStatus as PracticeStatusEnum,
   QuestionType
@@ -179,6 +188,11 @@ export const mockQuestions: Question[] = [
   }
 ]
 
+/**
+ * API-IMP-002 导入任务 Mock
+ * 覆盖后端五态：success / parsing / proofread / failed（另含 pending 语义同 parsing 前置）
+ * 本期后端为同步占位：upload/manual/ocr 均返回 status=proofread（待校对）
+ */
 export const mockImportTasks: ImportTask[] = [
   {
     id: 501,
@@ -186,7 +200,9 @@ export const mockImportTasks: ImportTask[] = [
     origin_name: '英语真题2026.xlsx',
     total_count: 120,
     parsed_count: 120,
-    status: 'success'
+    status: 'success',
+    status_text: '解析完成',
+    progress: 100
   },
   {
     id: 502,
@@ -194,7 +210,30 @@ export const mockImportTasks: ImportTask[] = [
     origin_name: '法理学考点整理.pdf',
     total_count: 80,
     parsed_count: 46,
-    status: 'parsing'
+    status: 'parsing',
+    status_text: '解析中',
+    progress: 58
+  },
+  {
+    id: 503,
+    bank_id: 1026,
+    origin_name: '毛概第一章练习.docx',
+    total_count: 0,
+    parsed_count: 0,
+    status: 'proofread',
+    status_text: '待校对',
+    progress: 100
+  },
+  {
+    id: 504,
+    bank_id: 1027,
+    origin_name: '行测题库扫描版.pdf',
+    total_count: 0,
+    parsed_count: 0,
+    status: 'failed',
+    status_text: '解析失败',
+    progress: 0,
+    fail_reason: '文档为扫描图片且无文字层，无法提取题目内容，请改用拍照录题'
   }
 ]
 
@@ -1016,5 +1055,779 @@ export const mockErrorProne: ErrorProneItem[] = [
     correct_rate: 39.8,
     answer_count: 1120,
     is_wrong: false
+  }
+]
+
+// ============================================================
+// 考试域 Mock（API-EXM-001 ~ 005）
+// ============================================================
+
+/** 试卷 9001 题目：一建建设工程法规（覆盖单选/多选/判断/填空/简答五种题型） */
+const EXAM_PAPER_9001_QUESTIONS: Question[] = [
+  {
+    id: 9101,
+    bank_id: 1028,
+    type: QuestionType.Single,
+    title: '根据《招标投标法》，中标通知书对招标人和中标人具有（）。',
+    options: [
+      { key: 'A', content: '合同效力' },
+      { key: 'B', content: '法律效力' },
+      { key: 'C', content: '要约效力' },
+      { key: 'D', content: '参考效力' }
+    ],
+    answer: 'B',
+    analysis: '《招标投标法》第 45 条规定，中标通知书发出后对招标人和中标人具有法律效力。中标通知书属于承诺，但合同效力以订立书面合同为准。',
+    is_favorited: false,
+    note: ''
+  },
+  {
+    id: 9102,
+    bank_id: 1028,
+    type: QuestionType.Single,
+    title: '建设工程施工许可证应当由（）申请领取。',
+    options: [
+      { key: 'A', content: '建设单位' },
+      { key: 'B', content: '施工单位' },
+      { key: 'C', content: '监理单位' },
+      { key: 'D', content: '设计单位' }
+    ],
+    answer: 'A',
+    analysis: '《建筑法》第 7 条规定，施工许可证由建设单位（业主方）按照国家有关规定向工程所在地县级以上人民政府建设行政主管部门申请领取。',
+    is_favorited: false,
+    note: ''
+  },
+  {
+    id: 9103,
+    bank_id: 1028,
+    type: QuestionType.Multiple,
+    title: '下列属于行政处罚种类的有（）。',
+    options: [
+      { key: 'A', content: '警告' },
+      { key: 'B', content: '罚款' },
+      { key: 'C', content: '拘役' },
+      { key: 'D', content: '责令停产停业' }
+    ],
+    answer: 'ABD',
+    analysis: '拘役属于刑罚中的主刑，不是行政处罚；《行政处罚法》规定的处罚种类包括警告、罚款、责令停产停业、暂扣或吊销许可证件、行政拘留等。',
+    is_favorited: false,
+    note: ''
+  },
+  {
+    id: 9104,
+    bank_id: 1028,
+    type: QuestionType.Judge,
+    title: '施工单位应当在施工现场入口处设置明显的安全警示标志。',
+    options: [
+      { key: 'A', content: '正确' },
+      { key: 'B', content: '错误' }
+    ],
+    answer: 'A',
+    analysis: '《建设工程安全生产管理条例》第 28 条规定，施工现场入口处、施工起重机械等危险部位应设置明显的安全警示标志。',
+    is_favorited: false,
+    note: ''
+  },
+  {
+    id: 9105,
+    bank_id: 1028,
+    type: QuestionType.Judge,
+    title: '建设工程质量保证金的比例不得超过工程价款结算总额的 5%。',
+    options: [
+      { key: 'A', content: '正确' },
+      { key: 'B', content: '错误' }
+    ],
+    answer: 'B',
+    analysis: '根据现行《建设工程质量保证金管理办法》，保证金总预留比例不得超过工程价款结算总额的 3%，题干中的 5% 为旧规。',
+    is_favorited: false,
+    note: ''
+  },
+  {
+    id: 9106,
+    bank_id: 1028,
+    type: QuestionType.Blank,
+    title: '混凝土标准养护的龄期一般为______天。',
+    options: [],
+    answer: '28',
+    analysis: '标准养护条件为温度 20±2℃、相对湿度 95% 以上，养护龄期 28 天，以 28 天抗压强度评定混凝土强度等级。',
+    is_favorited: false,
+    note: ''
+  },
+  {
+    id: 9107,
+    bank_id: 1028,
+    type: QuestionType.Single,
+    title: '投标保证金不得超过招标项目估算价的（）。',
+    options: [
+      { key: 'A', content: '2%' },
+      { key: 'B', content: '5%' },
+      { key: 'C', content: '10%' },
+      { key: 'D', content: '20%' }
+    ],
+    answer: 'A',
+    analysis: '《招标投标法实施条例》第 26 条规定，投标保证金不得超过招标项目估算价的 2%。',
+    is_favorited: false,
+    note: ''
+  },
+  {
+    id: 9108,
+    bank_id: 1028,
+    type: QuestionType.Essay,
+    title: '简述建设工程竣工验收应当具备的条件。',
+    options: [],
+    answer: '（1）完成工程设计和合同约定的各项内容；（2）有完整的技术档案和施工管理资料；（3）有主要建材、构配件和设备的进场试验报告；（4）有勘察、设计、施工、监理等单位分别签署的质量合格文件；（5）有施工单位签署的工程保修书。',
+    analysis: '《建设工程质量管理条例》第 16 条列举了竣工验收应当具备的五项条件，答题时按条目作答并展开说明。',
+    is_favorited: false,
+    note: ''
+  }
+]
+
+/** 试卷 9002 题目：公考公共基础知识 */
+const EXAM_PAPER_9002_QUESTIONS: Question[] = [
+  {
+    id: 9201,
+    bank_id: 1027,
+    type: QuestionType.Single,
+    title: '“锲而不舍，金石可镂”出自（）。',
+    options: [
+      { key: 'A', content: '《论语》' },
+      { key: 'B', content: '《劝学》' },
+      { key: 'C', content: '《孟子》' },
+      { key: 'D', content: '《庄子》' }
+    ],
+    answer: 'B',
+    analysis: '出自荀子《劝学》：「锲而舍之，朽木不折；锲而不舍，金石可镂」，强调学习贵在坚持。',
+    is_favorited: false,
+    note: ''
+  },
+  {
+    id: 9202,
+    bank_id: 1027,
+    type: QuestionType.Single,
+    title: '我国现行宪法最近一次修正是在（）年。',
+    options: [
+      { key: 'A', content: '2014' },
+      { key: 'B', content: '2015' },
+      { key: 'C', content: '2018' },
+      { key: 'D', content: '2023' }
+    ],
+    answer: 'C',
+    analysis: '现行《宪法》为 1982 年宪法，历经 1988、1993、1999、2004、2018 年五次修正，最近一次为 2018 年。',
+    is_favorited: false,
+    note: ''
+  },
+  {
+    id: 9203,
+    bank_id: 1027,
+    type: QuestionType.Multiple,
+    title: '下列属于宪法规定的公民基本义务的有（）。',
+    options: [
+      { key: 'A', content: '维护国家统一和民族团结' },
+      { key: 'B', content: '依照法律纳税' },
+      { key: 'C', content: '受教育的义务' },
+      { key: 'D', content: '遵守公共秩序' }
+    ],
+    answer: 'ABCD',
+    analysis: '受教育既是公民的基本权利也是基本义务；维护国家统一、依法纳税、遵守公共秩序均为宪法明文规定的基本义务。',
+    is_favorited: false,
+    note: ''
+  },
+  {
+    id: 9204,
+    bank_id: 1027,
+    type: QuestionType.Judge,
+    title: '凡具有中华人民共和国国籍的人都是中华人民共和国公民。',
+    options: [
+      { key: 'A', content: '正确' },
+      { key: 'B', content: '错误' }
+    ],
+    answer: 'A',
+    analysis: '《宪法》第 33 条规定，凡具有中华人民共和国国籍的人都是中华人民共和国公民，国籍是公民资格的唯一标准。',
+    is_favorited: false,
+    note: ''
+  },
+  {
+    id: 9205,
+    bank_id: 1027,
+    type: QuestionType.Blank,
+    title: '我国的根本政治制度是______。',
+    options: [],
+    answer: '人民代表大会制度',
+    analysis: '人民代表大会制度是我国的根本政治制度；注意与基本政治制度（如政党制度、民族区域自治制度等）相区分。',
+    is_favorited: false,
+    note: ''
+  },
+  {
+    id: 9206,
+    bank_id: 1027,
+    type: QuestionType.Essay,
+    title: '简述公文文种“通知”的主要适用范围。',
+    options: [],
+    answer: '通知适用于发布、传达要求下级机关执行和有关单位周知或者执行的事项，以及批转、转发公文，任免人员等。',
+    analysis: '《党政机关公文处理工作条例》第 8 条对通知的适用范围作了规定，答题要点包括：发布传达事项、批转转发公文、人事任免。',
+    is_favorited: false,
+    note: ''
+  }
+]
+
+/** 两套预置试卷（EXM-002 按 id 读取） */
+export const mockExamPapers: ExamPaper[] = [
+  {
+    id: 9001,
+    title: '一建法规 模拟考试',
+    bank_id: 1028,
+    duration_minutes: 60,
+    total_score: 100,
+    question_count: EXAM_PAPER_9001_QUESTIONS.length,
+    questions: EXAM_PAPER_9001_QUESTIONS
+  },
+  {
+    id: 9002,
+    title: '公考公共基础 模拟卷',
+    bank_id: 1027,
+    duration_minutes: 45,
+    total_score: 100,
+    question_count: EXAM_PAPER_9002_QUESTIONS.length,
+    questions: EXAM_PAPER_9002_QUESTIONS
+  }
+]
+
+/** Mock 试卷仓库：EXM-001 组卷后写入，EXM-002 按 id 读取 */
+export const mockPaperStore = new Map<number, ExamPaper>(
+  mockExamPapers.map((paper) => [paper.id, paper])
+)
+
+/** API-EXM-001 组卷 Mock：从题库题池抽题（不足时循环补齐），并写入试卷仓库 */
+export function createMockPaper(data: {
+  bank_id: number
+  bank_title: string
+  question_count: number
+  duration_minutes: number
+}): ExamPaper {
+  const pool = [...EXAM_PAPER_9001_QUESTIONS, ...EXAM_PAPER_9002_QUESTIONS]
+  const questions: Question[] = Array.from({ length: data.question_count }, (_, i) => ({
+    ...pool[i % pool.length],
+    id: 880000 + i // 保证同卷内题目 id 唯一
+  }))
+  const paper: ExamPaper = {
+    id: 9100 + mockPaperStore.size,
+    title: `${data.bank_title} 模拟考试`,
+    bank_id: data.bank_id,
+    duration_minutes: data.duration_minutes,
+    total_score: 100,
+    question_count: questions.length,
+    questions
+  }
+  mockPaperStore.set(paper.id, paper)
+  return paper
+}
+
+/** 答案归一化：选择题按字母排序比对，文本答案去空格比对 */
+function normalizeAnswer(value: string): string {
+  return value.trim().toUpperCase().split('').sort().join('')
+}
+
+/** 生成错误的用户答案（预置记录用），保证与正确答案不一致 */
+function pickWrongAnswer(question: Question): string {
+  if (question.type === QuestionType.Blank || question.type === QuestionType.Essay) {
+    return '（作答不完整）'
+  }
+  const wrong = question.options.find((option) => !question.answer.includes(option.key))
+  return wrong?.key ?? ''
+}
+
+/** 当前时间文本（预置记录与交卷时间用） */
+function nowText(): string {
+  const d = new Date()
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+}
+
+/**
+ * 判分核心（EXM-003 Mock）：等分制逐题比对，score 保留 1 位小数
+ */
+function buildRecord(
+  paper: ExamPaper,
+  userAnswers: Array<{ question_id: number; answer: string }>,
+  costSeconds: number,
+  createdAt: string,
+  id: number
+): ExamRecordDetail {
+  const questions = paper.questions ?? []
+  const answerMap = new Map(userAnswers.map((item) => [item.question_id, item.answer]))
+  const perScore = questions.length
+    ? Math.round((paper.total_score / questions.length) * 10) / 10
+    : 0
+  let correctCount = 0
+  const answers: ExamRecordAnswer[] = questions.map((question) => {
+    const userAnswer = answerMap.get(question.id) ?? ''
+    const isCorrect = userAnswer !== '' && normalizeAnswer(userAnswer) === normalizeAnswer(question.answer)
+    if (isCorrect) correctCount += 1
+    return {
+      question_id: question.id,
+      stem_preview: question.title,
+      user_answer: userAnswer || '未作答',
+      is_correct: isCorrect,
+      score: isCorrect ? perScore : 0
+    }
+  })
+  const score = Math.round(correctCount * perScore * 10) / 10
+  return {
+    id,
+    paper_id: paper.id,
+    title: paper.title,
+    score,
+    total_score: paper.total_score,
+    correct_count: correctCount,
+    question_count: questions.length,
+    cost_seconds: costSeconds,
+    created_at: createdAt,
+    pass_score: 60,
+    is_passed: score >= 60,
+    answers
+  }
+}
+
+/** Mock 考试记录仓库（按时间倒序，最新在前）；EXM-003 交卷后写入，EXM-004/005 读取 */
+export const mockExamRecords: ExamRecordDetail[] = []
+
+/** 预置考试记录描述：wrongIds 内的题目按答错/未答处理 */
+const SEEDED_RECORDS: Array<{
+  id: number
+  paperId: number
+  wrongIds: number[]
+  costSeconds: number
+  createdAt: string
+}> = [
+  { id: 3001, paperId: 9001, wrongIds: [9108], costSeconds: 1830, createdAt: '2026-09-15 11:30:00' },
+  { id: 3002, paperId: 9002, wrongIds: [9206], costSeconds: 1500, createdAt: '2026-09-12 20:11:00' },
+  { id: 3003, paperId: 9001, wrongIds: [9103, 9105, 9106, 9108], costSeconds: 2400, createdAt: '2026-09-10 09:05:00' },
+  { id: 3004, paperId: 9002, wrongIds: [9203, 9205], costSeconds: 1200, createdAt: '2026-09-08 15:40:00' },
+  { id: 3005, paperId: 9001, wrongIds: [9105, 9106], costSeconds: 2010, createdAt: '2026-09-05 19:22:00' },
+  { id: 3006, paperId: 9002, wrongIds: [9202, 9203, 9205, 9206], costSeconds: 900, createdAt: '2026-09-02 10:10:00' }
+]
+
+// 按时间倒序写入：SEEDED_RECORDS 已按时间倒序排列
+for (const seed of SEEDED_RECORDS) {
+  const paper = mockPaperStore.get(seed.paperId)
+  if (!paper) continue
+  const questions = paper.questions ?? []
+  const userAnswers = questions.map((question) => ({
+    question_id: question.id,
+    answer: seed.wrongIds.includes(question.id) ? pickWrongAnswer(question) : question.answer
+  }))
+  mockExamRecords.push(buildRecord(paper, userAnswers, seed.costSeconds, seed.createdAt, seed.id))
+}
+
+/** API-EXM-003 交卷 Mock：判分并写入记录仓库（幂等由后端保证，Mock 每次生成新记录） */
+export function gradeMockExam(
+  paper: ExamPaper,
+  userAnswers: Array<{ question_id: number; answer: string }>,
+  costSeconds: number
+): ExamRecordDetail {
+  const record = buildRecord(paper, userAnswers, costSeconds, nowText(), 3100 + mockExamRecords.length)
+  mockExamRecords.unshift(record)
+  return record
+}
+
+// ============================================================
+// 题库市场 / 会员 / 订单 / 学习资料 / 搜索 Mock
+// ============================================================
+
+/** API-BANK-007 题库市场列表 Mock（8 个：考研/考公/一建/教资等） */
+export const mockMarketBanks: MarketBankItem[] = [
+  {
+    id: 3001,
+    title: '2026 考研英语（一）真题精讲',
+    category_id: 0,
+    source_type: BankSourceType.Official,
+    question_count: 860,
+    practiced_count: 15230,
+    status: BankStatus.Normal,
+    created_at: '2026-08-12',
+    description: '覆盖 2010-2025 年考研英语一真题，逐题精讲，附高频词汇与长难句解析。',
+    usage_count: 15230,
+    is_recommend: true
+  },
+  {
+    id: 3002,
+    title: '2026 考研政治核心考点 1200 题',
+    category_id: 0,
+    source_type: BankSourceType.Official,
+    question_count: 1200,
+    practiced_count: 9860,
+    status: BankStatus.Normal,
+    created_at: '2026-08-20',
+    description: '马原、毛中特、史纲、思修法基五大模块，浓缩核心考点，适合强化冲刺阶段。',
+    usage_count: 9860,
+    is_recommend: true
+  },
+  {
+    id: 3003,
+    title: '公务员行测专项训练（言语理解与表达）',
+    category_id: 3,
+    source_type: BankSourceType.Official,
+    question_count: 640,
+    practiced_count: 7342,
+    status: BankStatus.Normal,
+    created_at: '2026-07-15',
+    description: '国考/省考行测言语模块专项，逻辑填空 + 片段阅读，真题占比 80%。',
+    usage_count: 7342
+  },
+  {
+    id: 3004,
+    title: '公务员申论热点范文与真题解析',
+    category_id: 3,
+    source_type: BankSourceType.Official,
+    question_count: 180,
+    practiced_count: 4218,
+    status: BankStatus.Normal,
+    created_at: '2026-07-02',
+    description: '近五年国考申论真题 + 36 篇热点范文，附标准答题结构拆解。',
+    usage_count: 4218
+  },
+  {
+    id: 3005,
+    title: '一建建设工程法规高频题库',
+    category_id: 1,
+    source_type: BankSourceType.Official,
+    question_count: 1520,
+    practiced_count: 12680,
+    status: BankStatus.Normal,
+    created_at: '2026-06-18',
+    description: '依据 2026 版新教材编写，覆盖法规全部章节，含近三年真题与押题卷。',
+    usage_count: 12680,
+    is_recommend: true
+  },
+  {
+    id: 3006,
+    title: '一级建造师建设工程经济章节练习',
+    category_id: 1,
+    source_type: BankSourceType.Official,
+    question_count: 980,
+    practiced_count: 5390,
+    status: BankStatus.Normal,
+    created_at: '2026-06-25',
+    description: '工程经济、工程财务、建设工程估价三章分节练习，公式运用题精讲。',
+    usage_count: 5390
+  },
+  {
+    id: 3007,
+    title: '教师资格证《综合素质》中小幼通用',
+    category_id: 5,
+    source_type: BankSourceType.Official,
+    question_count: 720,
+    practiced_count: 8930,
+    status: BankStatus.Normal,
+    created_at: '2026-05-30',
+    description: '职业理念、法律法规、职业道德、文化素养、基本能力五模块全收录。',
+    usage_count: 8930
+  },
+  {
+    id: 3008,
+    title: '注册会计师《会计》高频考点 1500 题',
+    category_id: 2,
+    source_type: BankSourceType.Official,
+    question_count: 1500,
+    practiced_count: 6120,
+    status: BankStatus.Normal,
+    created_at: '2026-05-12',
+    description: '长期股权投资、合并报表、金融工具等重难点专题突破，附分录模板。',
+    usage_count: 6120
+  }
+]
+
+/** API-MBR-001 会员套餐列表 Mock（月/季/年/永久 4 档） */
+export const mockMemberPlans: MemberPlan[] = [
+  {
+    id: 1,
+    name: '月卡会员',
+    level: 1,
+    level_text: '月卡',
+    duration_days: 30,
+    price_amount: 30.0,
+    origin_amount: 39.0,
+    description: '适合短期冲刺备考',
+    benefits: ['每日 AI 导题 10 次', '全题库免费刷', '精简题模式', '错题导出'],
+    ai_import_quota: 300,
+    is_recommend: false
+  },
+  {
+    id: 2,
+    name: '季卡会员',
+    level: 2,
+    level_text: '季卡',
+    duration_days: 90,
+    price_amount: 68.0,
+    origin_amount: 117.0,
+    description: '一个备考周期刚刚好',
+    benefits: ['每日 AI 导题 20 次', '全题库免费刷', '精简题模式', '试题闪卡', '考点速记'],
+    ai_import_quota: 1800,
+    is_recommend: false
+  },
+  {
+    id: 3,
+    name: '年卡会员',
+    level: 3,
+    level_text: '年卡',
+    duration_days: 365,
+    price_amount: 199.0,
+    origin_amount: 468.0,
+    description: '全程备考首选，性价比最高',
+    benefits: [
+      '每日 AI 导题不限次',
+      '全题库免费刷',
+      '精简题模式',
+      '试题闪卡',
+      '考点速记',
+      'AI 出题',
+      '专属客服通道'
+    ],
+    ai_import_quota: 9999,
+    is_recommend: true
+  },
+  {
+    id: 4,
+    name: '永久会员',
+    level: 4,
+    level_text: '永久',
+    duration_days: 0,
+    price_amount: 399.0,
+    origin_amount: 999.0,
+    description: '一次开通，终身有效',
+    benefits: [
+      '每日 AI 导题不限次',
+      '全题库免费刷',
+      '全部 AI 能力开放',
+      '新功能优先体验',
+      '专属客服通道'
+    ],
+    ai_import_quota: 9999,
+    is_recommend: false
+  }
+]
+
+/** API-ORD-001 我的订单列表 Mock（6 条覆盖各状态） */
+export const mockOrders: OrderItem[] = [
+  {
+    id: 5001,
+    order_no: 'OD20260915110000abcdef',
+    order_type: 1,
+    order_type_text: '会员',
+    biz_id: 3,
+    biz_title: '年卡会员',
+    origin_amount: 468.0,
+    discount_amount: 269.0,
+    pay_amount: 199.0,
+    status: OrderStatus.Unpaid,
+    status_text: '待支付',
+    created_at: '2026-09-15 11:00:00',
+    paid_at: null
+  },
+  {
+    id: 5002,
+    order_no: 'OD20260912153000bcdef1',
+    order_type: 1,
+    order_type_text: '会员',
+    biz_id: 2,
+    biz_title: '季卡会员',
+    origin_amount: 117.0,
+    discount_amount: 49.0,
+    pay_amount: 68.0,
+    status: OrderStatus.Paid,
+    status_text: '已支付',
+    created_at: '2026-09-12 15:30:00',
+    paid_at: '2026-09-12 15:31:22'
+  },
+  {
+    id: 5003,
+    order_no: 'OD20260905092000cdef23',
+    order_type: 1,
+    order_type_text: '会员',
+    biz_id: 1,
+    biz_title: '月卡会员',
+    origin_amount: 39.0,
+    discount_amount: 9.0,
+    pay_amount: 30.0,
+    status: OrderStatus.Paid,
+    status_text: '已支付',
+    created_at: '2026-09-05 09:20:00',
+    paid_at: '2026-09-05 09:20:45'
+  },
+  {
+    id: 5004,
+    order_no: 'OD20260828184500def345',
+    order_type: 1,
+    order_type_text: '会员',
+    biz_id: 4,
+    biz_title: '永久会员',
+    origin_amount: 999.0,
+    discount_amount: 0.0,
+    pay_amount: 999.0,
+    status: OrderStatus.Refunded,
+    status_text: '已退款',
+    created_at: '2026-08-28 18:45:00',
+    paid_at: '2026-08-28 18:46:10'
+  },
+  {
+    id: 5005,
+    order_no: 'OD20260820143000ef4567',
+    order_type: 1,
+    order_type_text: '会员',
+    biz_id: 1,
+    biz_title: '月卡会员',
+    origin_amount: 39.0,
+    discount_amount: 0.0,
+    pay_amount: 39.0,
+    status: OrderStatus.Canceled,
+    status_text: '已取消',
+    created_at: '2026-08-20 14:30:00',
+    paid_at: null
+  },
+  {
+    id: 5006,
+    order_no: 'OD20260810101500f56789',
+    order_type: 1,
+    order_type_text: '会员',
+    biz_id: 2,
+    biz_title: '季卡会员',
+    origin_amount: 117.0,
+    discount_amount: 49.0,
+    pay_amount: 68.0,
+    status: OrderStatus.Paid,
+    status_text: '已支付',
+    created_at: '2026-08-10 10:15:00',
+    paid_at: '2026-08-10 10:15:38'
+  }
+]
+
+/** API-FIL-003 学习资料列表 Mock（8 条，覆盖常见类型） */
+export const mockResources: ResourceItem[] = [
+  {
+    id: 7101,
+    bank_id: 1024,
+    file_name: '英语语法核心讲义.pdf',
+    file_type: 'pdf',
+    file_size: 2048000,
+    created_at: '2026-09-15 11:40:02'
+  },
+  {
+    id: 7102,
+    bank_id: 1024,
+    file_name: '考研高频词汇表.xlsx',
+    file_type: 'xlsx',
+    file_size: 356000,
+    created_at: '2026-09-14 09:12:40'
+  },
+  {
+    id: 7103,
+    bank_id: 1025,
+    file_name: '法理学冲刺串讲.mp4',
+    file_type: 'mp4',
+    file_size: 268435456,
+    created_at: '2026-09-13 20:05:11'
+  },
+  {
+    id: 7104,
+    bank_id: 1025,
+    file_name: '法理学名词解释背诵版.docx',
+    file_type: 'docx',
+    file_size: 128500,
+    created_at: '2026-09-12 15:30:00'
+  },
+  {
+    id: 7105,
+    bank_id: 1026,
+    file_name: '一建法规历年真题汇总.pdf',
+    file_type: 'pdf',
+    file_size: 5242880,
+    created_at: '2026-09-10 08:22:33'
+  },
+  {
+    id: 7106,
+    bank_id: 1026,
+    file_name: '施工管理思维导图.png',
+    file_type: 'png',
+    file_size: 860000,
+    created_at: '2026-09-08 19:44:20'
+  },
+  {
+    id: 7107,
+    bank_id: null,
+    file_name: '错题整理方法论分享.mp3',
+    file_type: 'mp3',
+    file_size: 15360000,
+    created_at: '2026-09-05 12:00:00'
+  },
+  {
+    id: 7108,
+    bank_id: null,
+    file_name: '学习计划模板（通用）.xlsx',
+    file_type: 'xlsx',
+    file_size: 45800,
+    created_at: '2026-09-01 10:18:52'
+  }
+]
+
+/** API-SRC-001 题库内关键词搜索 Mock（题干摘要 / 题型 / 题库名） */
+export const mockSearchQuestions: SearchQuestionItem[] = [
+  {
+    ...mockQuestions[0],
+    bank_name: '英语-260117'
+  },
+  {
+    ...mockQuestions[1],
+    bank_name: '英语-260117'
+  },
+  {
+    ...mockQuestions[2],
+    bank_name: '英语-260117'
+  },
+  {
+    id: 8804,
+    bank_id: 1026,
+    type: QuestionType.Single,
+    title: '建设工程项目管理的核心任务是（）。',
+    options: [
+      { key: 'A', content: '项目目标控制' },
+      { key: 'B', content: '合同管理' },
+      { key: 'C', content: '信息管理' },
+      { key: 'D', content: '组织协调' }
+    ],
+    answer: 'A',
+    analysis: '项目管理的核心任务是项目的目标控制，业主方的项目管理是管理的核心。',
+    is_favorited: false,
+    note: '',
+    bank_name: '集大-毛概-1-11-AM9'
+  },
+  {
+    id: 8805,
+    bank_id: 1028,
+    type: QuestionType.Judge,
+    title: '混凝土标准养护龄期一般为 28 天。',
+    options: [
+      { key: 'A', content: '正确' },
+      { key: 'B', content: '错误' }
+    ],
+    answer: 'A',
+    analysis: '标准养护条件为温度 20±2℃、相对湿度 95% 以上，养护龄期 28 天。',
+    is_favorited: false,
+    note: '',
+    bank_name: '2411新教材赠送模拟试卷2'
+  },
+  {
+    id: 8806,
+    bank_id: 1025,
+    type: QuestionType.Multiple,
+    title: '下列属于我国正式法律渊源的有？',
+    options: [
+      { key: 'A', content: '宪法' },
+      { key: 'B', content: '法律' },
+      { key: 'C', content: '判例' },
+      { key: 'D', content: '行政法规' }
+    ],
+    answer: 'ABD',
+    analysis: '正式渊源包括宪法、法律、行政法规、地方性法规等；判例在我国属于非正式渊源。',
+    is_favorited: false,
+    note: '',
+    bank_name: '法理学 250111考试导入'
   }
 ]

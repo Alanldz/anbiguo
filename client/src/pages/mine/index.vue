@@ -99,7 +99,7 @@ const moreEntries: GridMenuItem[] = [
   { key: 'invite', label: '邀请码', iconText: '邀', path: '' },
   { key: 'coupon', label: '优惠券', iconText: '券', path: '' },
   { key: 'report', label: '试题报错', iconText: '报', path: '' },
-  { key: 'feedback', label: '意见反馈', iconText: '馈', path: '' },
+  { key: 'feedback', label: '意见反馈', iconText: '馈', path: '/pages-sub/feedback/create' },
   { key: 'help', label: '帮助中心', iconText: '助', path: '' },
   { key: 'web', label: '电脑网页版', iconText: '网', path: '' },
   { key: 'redeem', label: '兑换码', iconText: '兑', path: '' },
@@ -144,7 +144,8 @@ function handleScan() {
 }
 
 function handleNotice() {
-  uni.showToast({ title: '消息中心开发中', icon: 'none' })
+  // 跳转消息中心（pages-sub/notification/list，API-MSG-001）
+  uni.navigateTo({ url: '/pages-sub/notification/list' })
 }
 </script>
 

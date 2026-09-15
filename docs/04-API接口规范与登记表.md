@@ -137,6 +137,7 @@
 | API-PAY-001 | 支付 | 微信支付统一下单 | POST | `/api/v1/pay/wechat/prepay` | 是 | — | 待开发 | 2026-09-15 建立 |
 | API-PAY-002 | 支付 | 微信支付回调 | POST | `/api/v1/pay/wechat/notify` | 否（验签） | — | 待开发 | 2026-09-15 建立 |
 | API-CFG-001 | 配置 | 客户端启动配置 | GET | `/api/v1/config/boot` | 否 | — | 已开发 | 2026-09-15 建立 |
+| API-FBK-001 | 反馈 | 提交意见反馈 | POST | `/api/v1/feedbacks` | 是 | — | 已开发 | 2026-09-15 建立 |
 
 ## 四、用户后台接口登记表（`/console-api/v1`）
 
@@ -317,7 +318,7 @@
 | API-EXM-004 | GET `/api/v1/exam-records/{id}` | 已开发 | `Api/V1/Exam/ExamController::showRecord` |
 | API-EXM-005 | GET `/api/v1/exam-records` | 已开发 | `Api/V1/Exam/ExamController::records` |
 
-> 客户端 57 + 用户后台 50（§四，含认证 3）+ 总后台 33（§五）= **140 个接口中已开发 137 个**。剩余待开发仅 3 个：客户端搜题 API-SRC-002（依赖 AI 大模型）+ 支付 API-PAY-001~002（依赖微信支付商户号）。全部状态为「已开发」，均待联调。
+> 客户端 58 + 用户后台 50（§四，含认证 3）+ 总后台 33（§五）= **141 个接口中已开发 138 个**。剩余待开发仅 3 个：客户端搜题 API-SRC-002（依赖 AI 大模型）+ 支付 API-PAY-001~002（依赖微信支付商户号）。全部状态为「已开发」，均待联调。
 
 ### 8.1 待补齐清单（按优先级）
 

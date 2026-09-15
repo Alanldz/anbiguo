@@ -476,3 +476,26 @@ MemberLevel：0 普通 / 1 月卡 / 2 季卡 / 3 年卡 / 4 永久
 - Service：`server/app/Services/Api/{UserProfileService,ImportService,QuestionPracticeService,WrongQuestionService,FavoriteNoteService,ExamService,MemberService,OrderService,QuestionSearchService,NotificationService}.php`
 - Controller：`server/app/Http/Controllers/Api/V1/{User/ProfileController,Import/ImportController,Bank/QuestionPracticeController,Wrong/WrongQuestionController,Exam/ExamController,Member/MemberController,Order/OrderController,Search/SearchController,Notification/NotificationController}.php`
 - 路由：`server/routes/client.php`（追加 member/orders/search/notifications 区块及错题域 MST/ERR 路由）
+
+---
+
+## 十三、反馈接口（API-FBK-001）
+
+### API-FBK-001 `POST /feedbacks`（需登录，auth:client + user.active）
+- 请求参数：
+```jsonc
+{
+  "type": 1,             // 必填，反馈类型：1 功能异常 / 2 体验建议 / 3 其他
+  "content": "内容文本",   // 必填，5~500 字
+  "images": [101, 102],  // 可选，file_assets id 数组，最多 9 张
+  "contact": "联系方式"    // 可选，≤64 字
+}
+```
+- 校验：任一不合法抛 `PARAM_INVALID`（10007）；images 仅允许引用本人上传且未删除的 file_assets
+- 落库：`sys_feedbacks`（user_id=当前用户、type、content、images_json=JSON(images)、contact 默认 ''、status=0 待处理）
+- resp：
+```jsonc
+{ "submitted": true, "message": "感谢反馈，我们会尽快处理" }
+```
+- 处理流程由总后台 API-ADM-104（`/admin-api/v1/feedbacks`）负责，客户端不提供查看接口
+- 客户端落地：`client/src/api/feedback.ts` + `client/src/pages-sub/feedback/create.vue`（我的页「意见反馈」入口）

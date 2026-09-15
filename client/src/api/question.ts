@@ -96,3 +96,33 @@ export function fetchErrorProne(bankId: number, params: PageParams = {}): Promis
     bank_id: bankId
   })
 }
+
+/** API-SRC-001 题库内关键词搜索（keyword 题干模糊匹配，bank_id/type 可选过滤） */
+export function searchQuestions(
+  params: PageParams & {
+    keyword: string
+    bank_id?: number
+    type?: QuestionType
+  }
+): Promise<PageData<SearchQuestionItem>> {
+  if (USE_MOCK) {
+    const { page = 1, page_size = 20, keyword, bank_id, type } = params
+    const kw = keyword.trim()
+    const filtered = mockSearchQuestions.filter((item) => {
+      const hitKeyword = kw ? item.title.includes(kw) : true
+      const hitBank = bank_id ? item.bank_id === bank_id : true
+      const hitType = type ? item.type === type : true
+      return hitKeyword && hitBank && hitType
+    })
+    return mockDelay({
+      list: filtered.slice((page - 1) * page_size, page * page_size),
+      pagination: {
+        page,
+        page_size,
+        total: filtered.length,
+        total_pages: Math.ceil(filtered.length / page_size)
+      }
+    })
+  }
+  return requestPage<SearchQuestionItem>('/api/v1/search/questions', params)
+}

@@ -92,9 +92,25 @@ function handleSplitChange(event: { detail: { value: boolean } }) {
   splitAnswer.value = event.detail.value
 }
 
-function handleDownloadTemplate() {
-  console.log('[import] template url =', fetchImportTemplateUrl('xlsx'))
-  uni.showToast({ title: '模版下载开发中', icon: 'none' })
+/** API-IMP-003 下载导入模板：Mock 提示已生成；真实模式有示例地址则复制链接 */
+async function handleDownloadTemplate() {
+  const template = await fetchImportTemplate()
+  if (USE_MOCK) {
+    uni.showToast({ title: '模板已生成（演示）', icon: 'none' })
+    return
+  }
+  if (template.sample_url) {
+    uni.setClipboardData({
+      data: template.sample_url,
+      success: () => uni.showToast({ title: '模板下载链接已复制', icon: 'none' })
+    })
+    return
+  }
+  uni.showModal({
+    title: '导入模板说明',
+    content: template.columns.map((col) => `${col.name}${col.required ? '*' : ''}：${col.desc}`).join('\n'),
+    showCancel: false
+  })
 }
 
 async function handleSubmit() {

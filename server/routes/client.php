@@ -284,3 +284,11 @@ Route::middleware(['auth:client', 'user.active'])->prefix('search')->name('searc
     // API-SRC-001 题库内搜索试题
     Route::get('questions', [SearchController::class, 'questions'])->name('questions');
 });
+
+// =============================================================================
+// 反馈模块 · API-FBK-*（需登录）
+// =============================================================================
+Route::middleware(['auth:client', 'user.active'])->group(function () {
+    // API-FBK-001 提交意见反馈
+    Route::post('feedbacks', [FeedbackController::class, 'store'])->name('feedbacks.store');
+});

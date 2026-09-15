@@ -118,12 +118,46 @@ function handleRefresh(bank: QuestionBank) {
   uni.showToast({ title: `已更新：${bank.title}`, icon: 'none' })
 }
 
+/** 卡片「⋯」菜单：重命名（API-BANK-005）/ 导出（暂无接口）/ 删除（API-BANK-006） */
 function handleMore(bank: QuestionBank) {
   uni.showActionSheet({
     itemList: ['重命名', '导出题库', '删除题库'],
     success: ({ tapIndex }) => {
-      const actions = ['重命名', '导出题库', '删除题库']
-      uni.showToast({ title: `${actions[tapIndex]} 开发中`, icon: 'none' })
+      if (tapIndex === 0) handleRename(bank)
+      else if (tapIndex === 1) uni.showToast({ title: '导出功能待上线', icon: 'none' })
+      else handleDelete(bank)
+    }
+  })
+}
+
+/** API-BANK-005 重命名题库：弹输入框 → 调接口 → 刷新列表 */
+function handleRename(bank: QuestionBank) {
+  uni.showModal({
+    title: '重命名题库',
+    editable: true,
+    placeholderText: '请输入新的题库名称',
+    content: bank.title,
+    success: async (modal) => {
+      const title = (modal.content ?? '').trim()
+      if (!modal.confirm || !title || title === bank.title) return
+      await updateBank(bank.id, { title })
+      uni.showToast({ title: '重命名成功', icon: 'none' })
+      bankStore.loadMyBanks(true, keyword.value.trim())
+    }
+  })
+}
+
+/** API-BANK-006 删除题库：二次确认 → 软删 → 刷新列表 */
+function handleDelete(bank: QuestionBank) {
+  uni.showModal({
+    title: '删除题库',
+    content: `确定删除题库「${bank.title}」吗？删除后可在回收站找回。`,
+    confirmColor: '#EF4444',
+    success: async (modal) => {
+      if (!modal.confirm) return
+      await deleteBank(bank.id)
+      uni.showToast({ title: '已删除', icon: 'none' })
+      bankStore.loadMyBanks(true, keyword.value.trim())
     }
   })
 }
