@@ -139,24 +139,48 @@
 | API-CSL-ORD-001 | 订单 | 我的订单 | GET | `/console-api/v1/orders` | 待开发 |
 | API-CSL-STAT-001 | 统计 | 学习数据看板 | GET | `/console-api/v1/statistics/overview` | 待开发 |
 
-## 五、总后台接口登记表（`/admin-api/v1`，独立部署）
+## 五、总后台接口登记表（`/admin-api/v1`，独立应用 admin/api/）
+
+> 2026-09-15 重排：总后台落地时采用统一三位编号 `API-ADM-0xx`（旧分段编号作废）。
+> 实现落地：`admin/api/routes/admin_api.php` + `app/Http/Controllers/Admin/V1/`。
 
 | 编号 | 模块 | 接口名称 | 方法 | 路径 | 状态 |
 | --- | --- | --- | --- | --- | --- |
-| API-ADM-AUTH-001 | 认证 | 管理员登录（独立密钥） | POST | `/admin-api/v1/auth/login` | 待开发 |
-| API-ADM-AUTH-002 | 认证 | 管理员登出 | POST | `/admin-api/v1/auth/logout` | 待开发 |
-| API-ADM-USR-001 | 用户 | 用户列表/详情/封禁 | GET/PUT | `/admin-api/v1/users` | 待开发 |
-| API-ADM-BANK-001 | 题库 | 官方题库管理 | GET/POST/PUT/DELETE | `/admin-api/v1/question-banks` | 待开发 |
-| API-ADM-BANK-002 | 题库 | 内容审核（UGC） | PUT | `/admin-api/v1/question-banks/{id}/audit` | 待开发 |
-| API-ADM-CAT-001 | 分类 | 分类管理 | GET/POST/PUT/DELETE | `/admin-api/v1/categories` | 待开发 |
-| API-ADM-CFG-001 | 配置 | 配置分组列表 | GET | `/admin-api/v1/configs` | 待开发 |
-| API-ADM-CFG-002 | 配置 | 修改配置（短信/微信/OSS/支付/AI） | PUT | `/admin-api/v1/configs/{group}` | 待开发 |
-| API-ADM-CFG-003 | 配置 | 测试配置连通性 | POST | `/admin-api/v1/configs/{group}/test` | 待开发 |
-| API-ADM-ORD-001 | 订单 | 订单管理/退款 | GET/POST | `/admin-api/v1/orders` | 待开发 |
-| API-ADM-OPR-001 | 运营 | Banner/推荐位管理 | GET/POST/PUT/DELETE | `/admin-api/v1/banners` | 待开发 |
-| API-ADM-SYS-001 | 系统 | 管理员与角色权限 | GET/POST/PUT/DELETE | `/admin-api/v1/admins` | 待开发 |
-| API-ADM-SYS-002 | 系统 | 操作日志 | GET | `/admin-api/v1/logs` | 待开发 |
-| API-ADM-SYS-003 | 系统 | 数据看板 | GET | `/admin-api/v1/statistics/overview` | 待开发 |
+| API-ADM-001 | 认证 | 管理员登录（独立密钥 JWT_SECRET_ADMIN） | POST | `/admin-api/v1/auth/login` | 已实现 |
+| API-ADM-002 | 认证 | 管理员登出（jti 黑名单） | POST | `/admin-api/v1/auth/logout` | 已实现 |
+| API-ADM-003 | 认证 | 当前管理员（含角色+权限码） | GET | `/admin-api/v1/auth/me` | 已实现 |
+| API-ADM-010 | 看板 | 仪表盘统计（含近 7 天登录趋势） | GET | `/admin-api/v1/dashboard/summary` | 已实现 |
+| API-ADM-020 | 系统 | 管理员列表 | GET | `/admin-api/v1/admins` | 已实现 |
+| API-ADM-021 | 系统 | 新建管理员 | POST | `/admin-api/v1/admins` | 已实现 |
+| API-ADM-022 | 系统 | 编辑管理员 | PUT | `/admin-api/v1/admins/{id}` | 已实现 |
+| API-ADM-023 | 系统 | 删除管理员（禁删自己/最后超管） | DELETE | `/admin-api/v1/admins/{id}` | 已实现 |
+| API-ADM-030 | 系统 | 角色列表 | GET | `/admin-api/v1/roles` | 已实现 |
+| API-ADM-031 | 系统 | 新建角色 | POST | `/admin-api/v1/roles` | 已实现 |
+| API-ADM-032 | 系统 | 编辑角色 | PUT | `/admin-api/v1/roles/{id}` | 已实现 |
+| API-ADM-033 | 系统 | 删除角色（在用则拒绝） | DELETE | `/admin-api/v1/roles/{id}` | 已实现 |
+| API-ADM-034 | 系统 | 权限树 | GET | `/admin-api/v1/permissions` | 已实现 |
+| API-ADM-040 | 配置 | 配置列表（密文掩码显示） | GET | `/admin-api/v1/configs` | 已实现 |
+| API-ADM-041 | 配置 | 修改配置（密文项加密存储+清缓存） | PUT | `/admin-api/v1/configs/{id}` | 已实现 |
+| API-ADM-050 | 系统 | 操作日志 | GET | `/admin-api/v1/logs/operation` | 已实现 |
+| API-ADM-051 | 系统 | 登录日志 | GET | `/admin-api/v1/logs/login` | 已实现 |
+| API-ADM-060 | 用户 | 用户列表 | GET | `/admin-api/v1/users` | 已实现 |
+| API-ADM-061 | 用户 | 启用/禁用用户 | PUT | `/admin-api/v1/users/{id}/status` | 已实现 |
+| API-ADM-070 | 题库 | 题库列表 | GET | `/admin-api/v1/banks` | 已实现 |
+| API-ADM-071 | 题库 | 内容审核（通过/拒绝） | PUT | `/admin-api/v1/banks/{id}/audit` | 已实现 |
+| API-ADM-072 | 题库 | 上架/隐藏 | PUT | `/admin-api/v1/banks/{id}/status` | 已实现 |
+| API-ADM-080 | 运营 | 轮播列表 | GET | `/admin-api/v1/banners` | 已实现 |
+| API-ADM-081 | 运营 | 新建轮播 | POST | `/admin-api/v1/banners` | 已实现 |
+| API-ADM-082 | 运营 | 编辑轮播 | PUT | `/admin-api/v1/banners/{id}` | 已实现 |
+| API-ADM-083 | 运营 | 删除轮播 | DELETE | `/admin-api/v1/banners/{id}` | 已实现 |
+| API-ADM-090 | 运营 | AI 导题任务监控 | GET | `/admin-api/v1/import-tasks` | 已实现 |
+| API-ADM-100 | 分类 | 分类管理 | GET/POST/PUT/DELETE | `/admin-api/v1/categories` | 待开发 |
+| API-ADM-101 | 配置 | 测试配置连通性 | POST | `/admin-api/v1/configs/{id}/test` | 待开发 |
+| API-ADM-102 | 订单 | 订单管理/退款 | GET/POST | `/admin-api/v1/orders` | 待开发 |
+| API-ADM-103 | 文件 | 文件资源管理 | GET/DELETE | `/admin-api/v1/files` | 待开发 |
+| API-ADM-104 | 内容 | 意见反馈处理 | GET/PUT | `/admin-api/v1/feedbacks` | 待开发 |
+| API-ADM-105 | 交易 | 会员套餐配置 | GET/PUT | `/admin-api/v1/member-plans` | 待开发 |
+
+> 总后台前端工程：`admin/web/`（Vue3 + Element Plus，独立部署于 admin 域名），菜单权限码与 `SystemInitSeeder` 的 `sys_permissions.code` 一致（如 `bank:question-bank:audit`、`sys:config:view`）。
 
 ## 六、第三方接口登记表（统一由配置中心驱动）
 

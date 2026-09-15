@@ -17,9 +17,10 @@
 ## 仓库结构
 
 ```
-├── docs/     # 开发文档体系（规范唯一权威来源，共 10 份）
+├── docs/     # 开发文档体系（规范唯一权威来源，共 11 份）
 ├── client/   # 多端前端（uni-app，微信小程序 / Android / H5）
 ├── server/   # PHP 后端（Laravel 11，migration + 模型 + 接口）
+├── admin/    # 系统总后台（api/：Laravel 独立应用；web/：Vue3 + Element Plus 独立工程）
 └── 刷题软件功能清单.md   # 产品功能清单（15 模块 / 约 90 项，P0-P2）
 ```
 
