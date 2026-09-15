@@ -3,6 +3,39 @@
 > 记录粒度：文档规范层面的变更。代码变更走 Git 提交记录。
 > 格式：`日期 · 变更人 · 变更内容 · 影响范围`
 
+## 2026-09-15 · 第七次变更
+
+**变更人**：WorkBuddy（待补充实际负责人）
+
+**变更内容**
+
+1. **用户电脑端后台（console）落地**——三端中的第二端完成：
+   - **接口契约先行**：新增 `console/API-CONTRACT.md`（字段级契约），定义 50 个接口的路径/入参/响应字段/枚举文本映射，
+     作为前后端并行开发的唯一对接依据，任何字段增删先改契约再改代码
+   - **后端**（在 `server/` 内扩展，与客户端共用一个 Laravel 应用，符合 docs/06 §二既定隔离方案）：
+     新增 `Console/V1` 控制器 11 个 + `Services/Console/` 服务 9 个，重写 `routes/console_api.php`，
+     全部挂 `auth:console + console.user`，数据一律以当前用户为边界（越权抛 FORBIDDEN）；
+     编号扩展为 API-CSL-AUTH/STAT/BANK/CHP/QST/IMP/FIL/WRG/EXM/ORD/ACC 共 50 个并全部实现
+   - **前端**：新增 `console/web/` 独立工程（Vue3 + TS + Element Plus + Pinia，dev 端口 8230，
+     proxy `/console-api` → `:8000`，token key `shitu_console_token`，`X-Client-Platform: console`），
+     与总后台 admin/web 完全隔离、登录态互不相通；
+     10 个页面：登录 / 学习概览 / 我的题库 / 题目管理 / 题库导入 / 学习资料 / 我的错题 / 考试记录 / 订单与会员 / 账号设置；
+     `npm run build`（vue-tsc + vite）零错误通过
+2. **`docs/04` §四重排**：用户后台台账按契约编号重排为 50 条并全部标记已实现
+   （原 CSL-BANK-003「批量导入」重排为 CSL-IMP-*）；§八进度更新为 67/87
+3. **`docs/06` §九 页面登记**：console 端 10 个页面标记已实现并补充实现登记注记
+4. **`server/README.md` §五**：用户后台接口清单同步更新
+
+**影响范围**：用户后台全模块、接口台账（编号重排为破坏性变更）、前端工程目录新增 console/。
+
+**遗留与下一步**
+
+- 导入任务为同步占位实现（状态置「待校对」），AI/文档真实解析待 EXT-AI-001 接入后迭代
+- 七牛直传前端流程（取凭证 → 直传 → 登记）在 console/web 中留有 TODO，待七牛账号开通后联调
+- 本机无 PHP/MySQL 环境，console 后端未经过运行时验证，部署后需接口冒烟测试
+
+---
+
 ## 2026-09-15 · 第六次变更
 
 **变更人**：WorkBuddy（待补充实际负责人）

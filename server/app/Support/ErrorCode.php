@@ -39,6 +39,7 @@ final class ErrorCode
 
     public const UNAUTHORIZED         = 10401;  // 登录失效
     public const NO_PERMISSION        = 10403;  // 无权限
+    public const FORBIDDEN            = 10403;  // 越权访问（与 NO_PERMISSION 同义，专用于数据归属边界）
     public const NOT_FOUND            = 10404;  // 接口不存在
     public const METHOD_NOT_ALLOWED   = 10405;  // 请求方法不允许
     public const TOO_MANY_REQUESTS    = 10429;  // 请求过于频繁

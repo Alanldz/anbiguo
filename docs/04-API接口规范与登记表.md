@@ -127,17 +127,64 @@
 
 ## 四、用户后台接口登记表（`/console-api/v1`）
 
+> 2026-09-15 用户后台落地：按 `console/API-CONTRACT.md` 契约统一编号，共 50 个接口全部实现；
+> 实现落地：`server/routes/console_api.php` + `app/Http/Controllers/Console/V1/`（守卫 `auth:console`，2 小时 Token 不刷新）。
+> 旧台账的 API-CSL-BANK-003「批量导入」编号已重排为 API-CSL-IMP-*（见 §七变更登记）。
+
 | 编号 | 模块 | 接口名称 | 方法 | 路径 | 状态 |
 | --- | --- | --- | --- | --- | --- |
-| API-CSL-AUTH-001 | 认证 | 用户后台登录 | POST | `/console-api/v1/auth/login` | 待开发 |
-| API-CSL-AUTH-002 | 认证 | 退出登录 | POST | `/console-api/v1/auth/logout` | 待开发 |
-| API-CSL-BANK-001 | 题库 | 题库列表（分页/搜索） | GET | `/console-api/v1/question-banks` | 待开发 |
-| API-CSL-BANK-002 | 题库 | 题库详情与题目管理 | GET | `/console-api/v1/question-banks/{id}` | 待开发 |
-| API-CSL-BANK-003 | 题库 | 批量导入 | POST | `/console-api/v1/question-banks/import` | 待开发 |
-| API-CSL-FIL-001 | 文件 | 资料分类管理 | GET/POST | `/console-api/v1/file-categories` | 待开发 |
-| API-CSL-FIL-002 | 文件 | 资料上传与管理 | POST | `/console-api/v1/file-assets` | 待开发 |
-| API-CSL-ORD-001 | 订单 | 我的订单 | GET | `/console-api/v1/orders` | 待开发 |
-| API-CSL-STAT-001 | 统计 | 学习数据看板 | GET | `/console-api/v1/statistics/overview` | 待开发 |
+| API-CSL-AUTH-001 | 认证 | 用户后台登录（密码/验证码） | POST | `/console-api/v1/auth/login` | 已实现 |
+| API-CSL-AUTH-002 | 认证 | 退出登录 | POST | `/console-api/v1/auth/logout` | 已实现 |
+| API-CSL-AUTH-003 | 认证 | 当前登录用户信息 | GET | `/console-api/v1/auth/me` | 已实现 |
+| API-CSL-AUTH-004 | 认证 | 发送短信验证码（login/bind） | POST | `/console-api/v1/auth/sms-code` | 已实现 |
+| API-CSL-STAT-001 | 统计 | 学习概览（含近 30 天趋势） | GET | `/console-api/v1/statistics/overview` | 已实现 |
+| API-CSL-BANK-001 | 题库 | 题库列表（分页/搜索） | GET | `/console-api/v1/question-banks` | 已实现 |
+| API-CSL-BANK-002 | 题库 | 题库详情 | GET | `/console-api/v1/question-banks/{id}` | 已实现 |
+| API-CSL-BANK-003 | 题库 | 新建题库 | POST | `/console-api/v1/question-banks` | 已实现 |
+| API-CSL-BANK-004 | 题库 | 更新 / 重命名题库 | PUT | `/console-api/v1/question-banks/{id}` | 已实现 |
+| API-CSL-BANK-005 | 题库 | 删除题库（级联软删题目与章节） | DELETE | `/console-api/v1/question-banks/{id}` | 已实现 |
+| API-CSL-BANK-006 | 题库 | 导出题库（JSON） | GET | `/console-api/v1/question-banks/{id}/export` | 已实现 |
+| API-CSL-BANK-007 | 题库 | 分类树（下拉） | GET | `/console-api/v1/bank-categories` | 已实现 |
+| API-CSL-CHP-001 | 章节 | 章节列表 | GET | `/console-api/v1/question-banks/{bankId}/chapters` | 已实现 |
+| API-CSL-CHP-002 | 章节 | 新建章节 | POST | `/console-api/v1/question-banks/{bankId}/chapters` | 已实现 |
+| API-CSL-CHP-003 | 章节 | 更新章节 | PUT | `/console-api/v1/chapters/{id}` | 已实现 |
+| API-CSL-CHP-004 | 章节 | 删除章节（题目归入未分章） | DELETE | `/console-api/v1/chapters/{id}` | 已实现 |
+| API-CSL-QST-001 | 题目 | 题目列表 | GET | `/console-api/v1/question-banks/{bankId}/questions` | 已实现 |
+| API-CSL-QST-002 | 题目 | 题目详情（含选项） | GET | `/console-api/v1/questions/{id}` | 已实现 |
+| API-CSL-QST-003 | 题目 | 新增题目 | POST | `/console-api/v1/question-banks/{bankId}/questions` | 已实现 |
+| API-CSL-QST-004 | 题目 | 更新题目 | PUT | `/console-api/v1/questions/{id}` | 已实现 |
+| API-CSL-QST-005 | 题目 | 删除题目 | DELETE | `/console-api/v1/questions/{id}` | 已实现 |
+| API-CSL-QST-006 | 题目 | 批量删除 | POST | `/console-api/v1/questions/batch-delete` | 已实现 |
+| API-CSL-QST-007 | 题目 | 批量移动章节 | POST | `/console-api/v1/questions/batch-move` | 已实现 |
+| API-CSL-IMP-001 | 导入 | 创建导入任务（同步占位，AI 解析待迭代） | POST | `/console-api/v1/import-tasks` | 已实现 |
+| API-CSL-IMP-002 | 导入 | 任务列表 | GET | `/console-api/v1/import-tasks` | 已实现 |
+| API-CSL-IMP-003 | 导入 | 任务详情（含解析结果） | GET | `/console-api/v1/import-tasks/{id}` | 已实现 |
+| API-CSL-IMP-004 | 导入 | 删除任务 | DELETE | `/console-api/v1/import-tasks/{id}` | 已实现 |
+| API-CSL-IMP-005 | 导入 | 导入模板说明 | GET | `/console-api/v1/import-tasks/template` | 已实现 |
+| API-CSL-FIL-001 | 文件 | 资料分类列表 | GET | `/console-api/v1/file-categories` | 已实现 |
+| API-CSL-FIL-002 | 文件 | 新建资料分类 | POST | `/console-api/v1/file-categories` | 已实现 |
+| API-CSL-FIL-003 | 文件 | 更新资料分类 | PUT | `/console-api/v1/file-categories/{id}` | 已实现 |
+| API-CSL-FIL-004 | 文件 | 删除资料分类 | DELETE | `/console-api/v1/file-categories/{id}` | 已实现 |
+| API-CSL-FIL-005 | 文件 | 资料列表 | GET | `/console-api/v1/file-assets` | 已实现 |
+| API-CSL-FIL-006 | 文件 | 上传后登记 | POST | `/console-api/v1/file-assets` | 已实现 |
+| API-CSL-FIL-007 | 文件 | 删除资料 | DELETE | `/console-api/v1/file-assets/{id}` | 已实现 |
+| API-CSL-FIL-008 | 文件 | 资料下载地址（签名） | GET | `/console-api/v1/file-assets/{id}/url` | 已实现 |
+| API-CSL-FIL-009 | 文件 | 七牛直传凭证 | POST | `/console-api/v1/files/upload-token` | 已实现 |
+| API-CSL-WRG-001 | 错题 | 错题列表 | GET | `/console-api/v1/wrong-questions` | 已实现 |
+| API-CSL-WRG-002 | 错题 | 移除错题 | DELETE | `/console-api/v1/wrong-questions/{id}` | 已实现 |
+| API-CSL-WRG-003 | 错题 | 批量移除 | POST | `/console-api/v1/wrong-questions/batch-remove` | 已实现 |
+| API-CSL-EXM-001 | 考试 | 考试记录列表 | GET | `/console-api/v1/exam-records` | 已实现 |
+| API-CSL-EXM-002 | 考试 | 记录详情（含作答明细） | GET | `/console-api/v1/exam-records/{id}` | 已实现 |
+| API-CSL-ORD-001 | 订单 | 我的订单 | GET | `/console-api/v1/orders` | 已实现 |
+| API-CSL-ORD-002 | 订单 | 订单详情 | GET | `/console-api/v1/orders/{id}` | 已实现 |
+| API-CSL-ORD-003 | 会员 | 我的会员 | GET | `/console-api/v1/member` | 已实现 |
+| API-CSL-ORD-004 | 会员 | 会员套餐列表 | GET | `/console-api/v1/member-plans` | 已实现 |
+| API-CSL-ACC-001 | 账号 | 个人资料 | GET | `/console-api/v1/account/profile` | 已实现 |
+| API-CSL-ACC-002 | 账号 | 更新资料 | PUT | `/console-api/v1/account/profile` | 已实现 |
+| API-CSL-ACC-003 | 账号 | 修改密码 | PUT | `/console-api/v1/account/password` | 已实现 |
+| API-CSL-ACC-004 | 账号 | 换绑手机 | PUT | `/console-api/v1/account/mobile` | 已实现 |
+
+> 契约文档（字段级）：`console/API-CONTRACT.md`；前端工程：`console/web/`（Vue3 + Element Plus，dev 端口 8230，登录态与客户端/总后台互不相通）。
 
 ## 五、总后台接口登记表（`/admin-api/v1`，独立应用 admin/api/）
 
@@ -249,8 +296,7 @@
 | P0 | 用户 | API-USER-001~003 |
 | P1 | 搜索 | API-SRC-001~002 |
 | P1 | 会员 / 订单 / 支付 | API-MBR-001~002、API-ORD-001、API-PAY-001~002 |
-| P1 | 用户后台其余 | API-CSL-BANK-001~003、API-CSL-FIL-001~002、API-CSL-ORD-001、API-CSL-STAT-001 |
-| P2 | 总后台全部 | API-ADM-*（独立应用 `admin/api/`） |
+| P2 | 总后台其余 | API-ADM-100~105（独立应用 `admin/api/`） |
 
 ### 8.2 尚未实现的服务端能力
 

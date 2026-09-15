@@ -72,4 +72,24 @@ class AuthController extends Controller
 
         return ApiResponse::success($this->authService->me($user));
     }
+
+    /** API-CSL-AUTH-004 发送短信验证码（免登录） */
+    public function smsCode(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'mobile' => ['required', 'string', 'regex:/^1[3-9]\d{9}$/'],
+            'scene'  => ['nullable', 'string', 'in:login,bind'],
+        ], [
+            'mobile.required' => '请输入手机号',
+            'mobile.regex'    => '手机号格式不正确',
+        ]);
+
+        $scene = ($data['scene'] ?? 'login') === 'bind'
+            ? ConsoleAuthService::SMS_SCENE_BIND
+            : ConsoleAuthService::SMS_SCENE;
+
+        $result = $this->authService->sendSmsCode((string) $data['mobile'], $scene);
+
+        return ApiResponse::success($result);
+    }
 }

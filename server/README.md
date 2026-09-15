@@ -127,8 +127,20 @@ php artisan queue:work redis --queue=default,import,notify,export
 | API-CSL-AUTH-001 | POST | `/console-api/v1/auth/login` | 用户后台登录 |
 | API-CSL-AUTH-002 | POST | `/console-api/v1/auth/logout` | 用户后台退出 |
 | API-CSL-AUTH-003 | GET | `/console-api/v1/auth/me` | 当前用户信息 |
+| API-CSL-AUTH-004 | POST | `/console-api/v1/auth/sms-code` | 用户后台登录验证码 |
+| API-CSL-STAT-001 | GET | `/console-api/v1/statistics/overview` | 学习概览（含近 30 天趋势） |
+| API-CSL-BANK-001~007 | GET/POST/PUT/DELETE | `/console-api/v1/question-banks*` | 题库 CRUD / 导出 / 分类树 |
+| API-CSL-CHP-001~004 | GET/POST/PUT/DELETE | `/console-api/v1/question-banks/{bankId}/chapters*` | 章节 CRUD |
+| API-CSL-QST-001~007 | GET/POST/PUT/DELETE | `/console-api/v1/questions*` | 题目 CRUD / 批量删除 / 批量移动 |
+| API-CSL-IMP-001~005 | GET/POST/DELETE | `/console-api/v1/import-tasks*` | 导入任务（AI 解析占位） |
+| API-CSL-FIL-001~009 | GET/POST/PUT/DELETE | `/console-api/v1/file-categories*` `file-assets*` `files/upload-token` | 资料分类 / 文件 / 直传 |
+| API-CSL-WRG-001~003 | GET/DELETE/POST | `/console-api/v1/wrong-questions*` | 错题管理 |
+| API-CSL-EXM-001~002 | GET | `/console-api/v1/exam-records*` | 考试记录 |
+| API-CSL-ORD-001~004 | GET | `/console-api/v1/orders*` `member*` | 订单与会员 |
+| API-CSL-ACC-001~004 | GET/PUT | `/console-api/v1/account/*` | 资料 / 密码 / 换绑手机 |
 
-> 其余接口已在 `routes/client.php` 底部按编号列队，`docs/04` 台账同步登记为「待开发」。
+> 用户后台共 50 个接口已实现，字段级契约见 `../console/API-CONTRACT.md`，前端工程见 `../console/web/`。
+> 其余客户端接口已在 `routes/client.php` 底部按编号列队，`docs/04` 台账同步登记为「待开发」。
 
 ---
 

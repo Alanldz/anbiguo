@@ -31,17 +31,22 @@ use Illuminate\Support\Facades\Hash;
  */
 class ConsoleAuthService
 {
-    /** 场景标识，与客户端登录的验证码隔离，避免互相顶掉 */
-    private const SMS_SCENE = 'console';
+    /** 登录场景标识，与客户端登录的验证码隔离，避免互相顶掉 */
+    public const SMS_SCENE = 'console';
+
+    /** 换绑手机场景标识 */
+    public const SMS_SCENE_BIND = 'bind';
 
     public function __construct(private readonly SmsService $smsService)
     {
     }
 
     /**
-     * 发送用户后台登录验证码
+     * 发送用户后台短信验证码
+     *
+     * @param  string  $scene  login=登录（默认）/ bind=换绑手机
      */
-    public function sendSmsCode(string $mobile): array
+    public function sendSmsCode(string $mobile, string $scene = self::SMS_SCENE): array
     {
         $user = User::where('mobile', $mobile)->first();
 
@@ -50,7 +55,15 @@ class ConsoleAuthService
             return ['debug_code' => null];
         }
 
-        return $this->smsService->sendCode($mobile, self::SMS_SCENE);
+        return $this->smsService->sendCode($mobile, $scene);
+    }
+
+    /**
+     * 校验短信验证码（一次性，成功后立即销毁）
+     */
+    public function verifySmsCode(string $mobile, string $code, string $scene = self::SMS_SCENE): void
+    {
+        $this->smsService->verifyCode($mobile, $code, $scene);
     }
 
     /**
@@ -99,6 +112,8 @@ class ConsoleAuthService
         $profile = UserProfile::where('user_id', $user->id)->first();
         $member = UserMember::where('user_id', $user->id)->first();
 
+        $level = MemberLevel::tryFrom((int) ($member?->level ?? MemberLevel::NORMAL->value)) ?? MemberLevel::NORMAL;
+
         return [
             'id'       => $user->id,
             'uid'      => $user->uid,
@@ -106,7 +121,8 @@ class ConsoleAuthService
             'nickname' => $profile?->nickname ?? '',
             'avatar'   => $profile?->avatar ?? '',
             'member'   => [
-                'level'      => (int) ($member?->level ?? MemberLevel::NORMAL->value),
+                'level'      => $level->value,
+                'level_text' => $level->label(),
                 'expired_at' => $member?->expired_at?->toDateTimeString(),
             ],
         ];
