@@ -80,6 +80,8 @@ import type { QuestionBank } from '@/types'
 const bankStore = useBankStore()
 const keyword = ref('')
 const total = computed(() => bankStore.banks.length)
+/** 导出防重复点击锁 */
+let exporting = false
 
 const activeCategoryName = computed(
   () => bankStore.categories.find((item) => item.id === bankStore.activeCategoryId)?.name ?? '我的题库'
@@ -118,16 +120,30 @@ function handleRefresh(bank: QuestionBank) {
   uni.showToast({ title: `已更新：${bank.title}`, icon: 'none' })
 }
 
-/** 卡片「⋯」菜单：重命名（API-BANK-005）/ 导出（暂无接口）/ 删除（API-BANK-006） */
+/** 卡片「⋯」菜单：重命名（API-BANK-005）/ 导出（客户端聚合 JSON 下载，同 bank/detail）/ 删除（API-BANK-006） */
 function handleMore(bank: QuestionBank) {
   uni.showActionSheet({
     itemList: ['重命名', '导出题库', '删除题库'],
     success: ({ tapIndex }) => {
       if (tapIndex === 0) handleRename(bank)
-      else if (tapIndex === 1) uni.showToast({ title: '导出功能待上线', icon: 'none' })
+      else if (tapIndex === 1) handleExport(bank)
       else handleDelete(bank)
     }
   })
+}
+
+/** 导出题库：复用 utils/export.ts 的聚合导出（H5 下载 JSON） */
+async function handleExport(bank: QuestionBank) {
+  if (exporting) return
+  exporting = true
+  uni.showLoading({ title: '正在导出…' })
+  try {
+    await exportBankAsJson(bank.id)
+    uni.showToast({ title: '导出成功', icon: 'success' })
+  } finally {
+    exporting = false
+    uni.hideLoading()
+  }
 }
 
 /** API-BANK-005 重命名题库：弹输入框 → 调接口 → 刷新列表 */

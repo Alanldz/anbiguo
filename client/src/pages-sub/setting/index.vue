@@ -82,8 +82,9 @@ function handleClearCache() {
   })
 }
 
-function handleAgreement(name: string) {
-  uni.showToast({ title: `${name} 待上线`, icon: 'none' })
+/** 用户协议 / 隐私政策（API 无关静态页 pages-sub/agreement/index?type=service|privacy） */
+function handleAgreement(name: 'service' | 'privacy') {
+  uni.navigateTo({ url: `/pages-sub/agreement/index?type=${name}` })
 }
 
 /** 帮助中心（pages-sub/help/index，静态 FAQ） */

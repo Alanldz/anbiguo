@@ -116,7 +116,12 @@ function handleGrid(item: GridMenuItem) {
     uni.navigateTo({ url: item.path })
     return
   }
-  const tip = item.key === 'web' ? '电脑端后台为独立站点，开发中' : `${item.label} 开发中`
+  // 电脑端后台（console/web）已建成，待服务器部署上线后即可访问；报错需题目上下文，入口在练习答题页
+  const tips: Record<string, string> = {
+    web: '电脑端后台已建成，部署上线后即可使用',
+    report: '试题报错请在练习答题页内使用'
+  }
+  const tip = tips[item.key] ?? `${item.label} 敬请期待`
   uni.showToast({ title: tip, icon: 'none' })
 }
 

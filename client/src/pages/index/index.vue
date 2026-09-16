@@ -167,7 +167,8 @@ function goMessage() {
 }
 
 function goConsole() {
-  uni.showToast({ title: '电脑端后台：console 站点，开发中', icon: 'none' })
+  // 电脑端后台（console/web）已建成，待服务器部署上线后即可访问
+  uni.showToast({ title: '电脑端后台已建成，部署上线后即可使用', icon: 'none' })
 }
 
 function goPracticeRecord() {
