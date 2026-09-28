@@ -70,5 +70,5 @@ echo "==> 优化缓存"
 chown -R www:www bootstrap/cache 2>/dev/null || true
 
 echo "==> $TARGET 初始化完成 ✅"
-[ "$TARGET" = "server" ] && echo ">> 记得：① .env 回填 app_client 账号 ② 修改 ADMIN_INIT_PASSWORD 后删除该行 ③ 添加宝塔计划任务 schedule:run"
+[ "$TARGET" = "server" ] && echo ">> 记得：① .env 回填 app_client 账号后【必须重新执行 php artisan config:cache】（否则缓存里仍是被临时注入的 app_admin）② 修改 ADMIN_INIT_PASSWORD 后删除该行 ③ 添加宝塔计划任务 schedule:run"
 [ "$TARGET" = "admin" ] && echo ">> 记得：APP_KEY / CACHE_PREFIX 必须与 server/.env 完全一致；JWT_SECRET_ADMIN 独立生成"
