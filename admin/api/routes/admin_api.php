@@ -14,6 +14,7 @@ declare(strict_types=1);
  */
 
 use App\Http\Controllers\Admin\V1\AdminController;
+use App\Http\Controllers\Admin\V1\AnalyticsController;
 use App\Http\Controllers\Admin\V1\AuthController;
 use App\Http\Controllers\Admin\V1\BankController;
 use App\Http\Controllers\Admin\V1\BannerController;

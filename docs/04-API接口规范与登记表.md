@@ -271,6 +271,7 @@
 | 2026-09-16 | API-EVT-001 | 新增 | 客户端新增「埋点批量上报」接口，新增表 sys_event_logs（迁移 2026_09_15_100004） | — | 向后兼容 |
 | 2026-09-16 | API-ADM-106 | 新增 | 总后台新增「埋点分析汇总」接口（权限码 sys:statistics:view） | — | 向后兼容 |
 | 2026-09-16 | — | 运维 | 新增定时任务 user:purge-canceled（每天 03:30 物理清除注销超 30 天用户，订单依法保留）；总后台新增 IP 白名单中间件 admin.ip（config/admin.php ip_whitelist） | — | 不影响存量 |
+| 2026-09-28 | — | 修复 | 安装前审计：补 `client.php` 的 FeedbackController、`admin_api.php` 的 AnalyticsController、`admin/api/bootstrap/app.php` 的 EnsureAdminActiveMiddleware/AdminIpWhitelist 四处缺失 `use` 导入（原会导致接口全量 500） | — | 无接口变更 |
 
 ---
 

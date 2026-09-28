@@ -17,7 +17,27 @@ client/unpackage/
 .env.*
 server/.env
 server/.env.*
+admin/api/.env
+admin/api/.env.*
+client/.env.local
+*.env.local
+
+# ---- 例外：模板与前端构建配置 ----
+# 1) .env.example 是模板，必须入库
 !.env.example
+!**/.env.example
+# 2) 两个后台前端的 .env.development / .env.production 只含 VITE_* 公开配置
+#    （VITE_* 会被打进 JS 产物，本身不是密钥），且服务器 git clone 后要构建 dist，
+#    缺这两个文件会导致接口基址为空 → 必须入库
+!admin/web/.env
+!admin/web/.env.development
+!admin/web/.env.production
+!console/web/.env
+!console/web/.env.development
+!console/web/.env.production
+
+# ---- 构建期临时文件 ----
+vite.config.ts.timestamp-*.mjs
 
 # ---- 运行时数据 ----
 server/storage/

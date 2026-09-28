@@ -3,6 +3,22 @@
 > 记录粒度：文档规范层面的变更。代码变更走 Git 提交记录。
 > 格式：`日期 · 变更人 · 变更内容 · 影响范围`
 
+## 2026-09-28 · 第十六次变更
+
+**变更人**：WorkBuddy（待补充实际负责人）
+
+**变更内容**
+
+1. **安装前全量审计修复（4 处致命缺陷）**——均为「类未导入 → 运行期 Class not found → 接口全量 500」，本地无 PHP 环境时静态扫描发现：
+   - `server/routes/client.php`：`FeedbackController::class`（API-FBK-001）未 `use` 导入 → 补 `App\Http\Controllers\Api\V1\User\FeedbackController`
+   - `admin/api/bootstrap/app.php`：中间件别名 `admin.active` / `admin.ip` 指向的 `EnsureAdminActiveMiddleware`、`AdminIpWhitelist` 未导入 → 补两条 `use`（否则**总后台全部接口**直接 500）
+   - `admin/api/routes/admin_api.php`：`AnalyticsController::class`（API-ADM-106）未导入 → 补 `use`
+2. **用户后台生产环境接口基址改相对路径**：`console/web/.env.production` 原为绝对地址 `https://console.anbiguo.com/console-api/v1`，与 `deploy/nginx/console.conf` 的「同域反代 /console-api/」方案不一致且写死域名（换域名须重新构建）→ 改为 `/console-api/v1`，并补注释说明另一种部署方式。
+3. **部署文档纠错**：`deploy/README.md` §三第 5 步建库脚本路径 `server/sql/` → 实际的 `server/database/sql/`；§5.2 冒烟命令 `/admin-api/v1/dashboard` → `/admin-api/v1/dashboard/summary`。
+4. **审计结论（可安装测试）**：三端后端 147 条路由、143 个台账接口已开发 140 个；251 个 PHP 文件 341 处类引用全部可解析；36 张表 ↔ 36 个模型一一对应；客户端 pages.json 34 页与文件双向一致、tabBar 5 项齐全；client H5 / admin-web / console-web 三端构建全部通过、vue-tsc 零类型错误。剩余 3 个接口（API-SRC-002 AI 搜题、API-PAY-001~002 微信支付）仅被外部账号阻塞。
+
+**影响范围**：server、admin/api、console/web、deploy 文档；向后兼容，无接口/字段变更
+
 ## 2026-09-16 · 第十五次变更
 
 **变更人**：WorkBuddy（待补充实际负责人）

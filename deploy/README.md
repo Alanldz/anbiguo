@@ -33,7 +33,7 @@
 2. **代码**：`git clone git@github.com:Alanldz/anbiguo.git /www/wwwroot/anbiguo`（Deploy Key 方式见 docs/08 §3.1）
 3. **主应用**：`bash deploy/scripts/server-init.sh server`（或按脚本逐步执行）
 4. **总后台**：`bash deploy/scripts/server-init.sh admin`
-5. **建库**：导入 `server/sql/` 建库脚本 → 三账号改强密码（docs/08 §3.4）
+5. **建库**：导入 `server/database/sql/` 建库脚本（`00_create_database.sql` / `01_create_users_and_privileges.sql`）→ 三账号改强密码（docs/08 §3.4）
 6. **迁移**：脚本内置（用 app_admin 跑 migrate/seed，完成后 .env 回填 app_client）
 7. **站点**：宝塔建 4 个站点 → 分别粘贴 `deploy/nginx/*.conf` 的内容（替换域名与路径）
 8. **定时任务**：宝塔「计划任务 → Shell 脚本」加一条：`cd /www/wwwroot/anbiguo/server && php artisan schedule:run >> /dev/null 2>&1`（每分钟）
@@ -79,7 +79,7 @@ curl https://api.xxx.com/console-api/v1/statistics/overview -H 'Authorization: B
 # 登录（账号来自 SystemInitSeeder，见 .env ADMIN_INIT_PASSWORD）
 curl -X POST https://admin.xxx.com/admin-api/v1/auth/login -H 'Content-Type: application/json' -d '{"username":"admin","password":"xxx"}'
 # 仪表盘 / 管理员列表
-curl https://admin.xxx.com/admin-api/v1/dashboard -H 'Authorization: Bearer <admin_token>'
+curl https://admin.xxx.com/admin-api/v1/dashboard/summary -H 'Authorization: Bearer <admin_token>'
 ```
 
 ### 5.3 前端站点
